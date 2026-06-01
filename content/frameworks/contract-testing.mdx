@@ -1,0 +1,31 @@
+---
+title: Contract Testing
+subtitle: Проверка контрактов между сервисами
+difficulty: medium
+domain_layer: Runtime
+problems:
+  - complex-001
+intent: |
+  Contract Testing проверяет, что consumer и provider согласованы по контракту API — без end-to-end тестов всей системы. Делает последствия изменений предсказуемыми: breaking change ловится до production.
+prompt: |
+  Спроектируй Contract Testing для [consumer service] ↔ [provider service]. Определи контракт (REST/OpenAPI, events schema, gRPC proto). Опиши consumer-driven contracts: expectations consumer, verification на стороне provider. Предложи первый контракт для самого хрупкого integration point.
+theory_anchor: |
+  Contract Testing материализует теорию границ интеграции. Контракт — явное соглашение между сервисами; тест фиксирует его в коде. Изменение provider без обновления contract — visible failure, не surprise в prod.
+artifact_desc: |
+  Contract files (Pact, Spring Cloud Contract, или OpenAPI diff в CI). Список covered integration points. CI job: provider verification on every PR.
+summary: Проверяет согласованность consumer и provider по API-контракту без полного end-to-end. Breaking changes ловятся до production — последствия изменений становятся предсказуемыми.
+---
+
+## The Algorithm
+
+1. **Найдите critical integration points**: Из Dependency Mapping + Runtime Flow — top-5 хрупких связей.
+2. **Выберите формат**: Pact (consumer-driven), OpenAPI diff, schema registry для events.
+3. **Напишите первый contract**: Minimal happy path + 1–2 error cases.
+4. **Provider verification в CI**: Provider build fails if contract broken.
+5. **Versioning strategy**: Как эволюционировать contract без breaking consumers.
+
+## Anti-patterns
+
+- **Contract tests как E2E substitute**: Contracts guard boundaries, not business logic.
+- **Contracts без CI**: Файлы в repo, но не verified — dead documentation.
+- **One giant contract**: Per integration point — отдельный contract.

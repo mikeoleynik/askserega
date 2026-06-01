@@ -1,0 +1,32 @@
+---
+title: Evolutionary Architecture
+subtitle: 'Архитектура, готовая к изменениям'
+difficulty: high
+domain_layer: Evolution
+problems:
+  - bound-006
+  - know-005
+intent: |
+  Evolutionary Architecture — подход к архитектуре, которая намеренно эволюционирует: fitness functions (automated checks) guard architectural characteristics при каждом изменении. Готовит систему к развитию без big rewrites.
+prompt: |
+  Примени Evolutionary Architecture к [название системы]. Определи architectural characteristics (modularity, scalability, deployability, …) — топ-3 для вашего контекста. Для каждой — fitness function: что автоматически проверять (metrics, tests, lint rules). Отметь текущие violations и первый fitness function для CI.
+theory_anchor: |
+  Evolutionary Architecture материализует теорию направленной эволюции. Без fitness functions архитектура дрейфует незаметно; с ними каждый commit — проверка «мы ещё в допустимом пространстве решений».
+artifact_desc: |
+  Документ: characteristics → fitness functions → tooling → thresholds. Первый fitness function в CI (например, dependency rule, cyclomatic complexity gate, deployment frequency metric).
+summary: 'Подход к архитектуре, которая намеренно эволюционирует: fitness functions guard architectural characteristics при каждом изменении. Готовит систему к развитию без big rewrites.'
+---
+
+## The Algorithm
+
+1. **Выберите characteristics**: 3–5 приоритетных — modularity, testability, scalability, security, deployability.
+2. **Сформулируйте fitness functions**: Measurable, automatable — не «хорошая архитектура».
+3. **Baseline**: Текущие значения metrics; где уже нарушения.
+4. **Интегрируйте в CI/CD**: ArchUnit, dependency-cruiser, custom scripts — fail build on regression.
+5. **Iterate**: Добавляйте functions по мере эволюции; удаляйте устаревшие.
+
+## Anti-patterns
+
+- **Fitness functions без baseline**: Порог из головы — начните с measure, потом tighten.
+- **Слишком много gates сразу**: Команда обойдёт CI; один meaningful gate лучше десяти ignored.
+- **Evolutionary без Conway/Reference Architecture**: Fitness functions guard direction — но direction нужно задать.

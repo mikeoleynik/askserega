@@ -1,0 +1,32 @@
+---
+title: Event-Driven Architecture
+subtitle: Слабая связность через события
+difficulty: medium
+domain_layer: Runtime
+problems:
+  - bound-005
+  - complex-003
+intent: |
+  Event-Driven Architecture (EDA) ослабляет coupling через асинхронный обмен событиями: сервисы публикуют facts, подписчики реагируют без прямых sync-вызовов. Подходит для снижения хрупких point-to-point зависимостей.
+prompt: |
+  Спроектируй Event-Driven integration для [сценарий / bounded context]. Определи: domain events, publishers, subscribers, event schema, idempotency strategy. Замени 2–3 sync-вызова на event flow. Отметь eventual consistency trade-offs. Предложи первый event для пилота с минимальным blast radius.
+theory_anchor: |
+  EDA материализует теорию слабой связанности через временное разделение. Publisher не знает subscribers — coupling по контракту события, не по implementation. Теория системы включает «что произошло», а не только «кто кого вызвал».
+artifact_desc: |
+  Event catalog: event name → schema → publisher → subscribers. Diagram async flow. Idempotency/retry/DLQ strategy. Список sync calls, заменённых events.
+summary: 'Ослабляет coupling через асинхронный обмен событиями: сервисы публикуют факты, подписчики реагируют без прямых sync-вызовов. Подходит для снижения хрупких point-to-point зависимостей.'
+---
+
+## The Algorithm
+
+1. **Найдите sync coupling hotspots**: Цепочки вызовов, где падение одного сервиса ломает другой.
+2. **Выделите domain events**: Facts в past tense: «OrderPlaced», «PaymentCaptured».
+3. **Спроектируйте contracts**: Schema versioning, compatibility rules.
+4. **Определите delivery semantics**: At-least-once + idempotent handlers; DLQ для poison messages.
+5. **Пилот на одном flow**: Один event, один producer, 1–2 consumers — validate ops.
+
+## Anti-patterns
+
+- **Events как commands**: «CreateOrder» — command; «OrderCreated» — event. Не путать.
+- **Distributed monolith через events**: Тесно связанные handlers с shared DB — не decoupling.
+- **EDA без observability**: Correlation ID, trace через bus — обязательны для debugging.

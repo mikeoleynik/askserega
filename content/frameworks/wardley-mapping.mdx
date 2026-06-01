@@ -1,0 +1,31 @@
+---
+title: Wardley Mapping
+subtitle: Эволюция и стратегия компонентов
+difficulty: high
+domain_layer: Evolution
+problems:
+  - bound-006
+intent: |
+  Wardley Mapping — карта компонентов системы по оси видимости (value chain) и эволюции (genesis → custom → product → commodity). Показывает, что стало bottleneck и где инвестировать vs покупать готовое.
+prompt: |
+  Построй Wardley Map для [название системы / платформы]. Ось Y: user need → components (visibility). Ось X: evolution stage каждого component. Отметь dependencies между components. Найди components в «wrong» evolution stage (custom там, где уже commodity). Предложи 3 strategic moves: build, buy, outsource, simplify.
+theory_anchor: |
+  Wardley Map материализует теорию эволюции и стратегии. Компонент дрейфует к commodity — борьба с этим через custom build создаёт bottleneck. Карта делает «почему мы это поддерживаем сами» явным.
+artifact_desc: |
+  Wardley Map (diagram или таблица): component → evolution stage → visibility → dependencies. Список strategic recommendations с обоснованием.
+summary: 'Карта компонентов по value chain и стадии эволюции (genesis → commodity). Показывает bottlenecks и где инвестировать в своё, а где покупать готовое.'
+---
+
+## The Algorithm
+
+1. **Определите user need**: Что пользователь/бизнес реально хочет — anchor карты сверху.
+2. **Разложите на components**: Всё, что нужно для need: apps, data, infra, integrations.
+3. **Расставьте по evolution**: Genesis (новое) → Custom → Product → Commodity (utility).
+4. **Нарисуйте dependencies**: Кто от кого зависит — снизу вверх по value chain.
+5. **Найдите inefficiency**: Custom build для commodity; missing platform for repeated genesis.
+
+## Anti-patterns
+
+- **Map всей компании за раз**: Начните с одного value stream.
+- **Статичная карта**: Evolution движется — пересматривайте quarterly.
+- **Map без action**: Карта для презентации, без strategic moves — waste.

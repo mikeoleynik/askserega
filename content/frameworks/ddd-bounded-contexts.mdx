@@ -1,0 +1,38 @@
+---
+title: DDD / Bounded Contexts
+subtitle: Границы доменных моделей в DDD
+difficulty: high
+domain_layer: Domain
+problems:
+  - undrsys-005
+  - bound-001
+  - bound-002
+  - bound-003
+  - bound-004
+  - complex-002
+  - complex-004
+  - complex-005
+intent: |
+  DDD Bounded Contexts определяют, где заканчивается одна доменная модель и начинается другая. Сервис без явных границ контекста неизбежно смешивает domain logic с infrastructure и чужими моделями.
+prompt: |
+  Примени DDD Bounded Contexts к [название сервиса / системы]. Выдели bounded contexts: subdomain, core entities, aggregates. Для каждого контекста определи: что входит в domain logic, что — external concern. Предложи, какие модули в коде соответствуют какому контексту и где границы размыты.
+theory_anchor: |
+  Bounded Context материализует теорию ответственности домена. Модель внутри контекста целостна; за его пределами — другой язык и другие правила. Явные границы — условие поддерживаемого domain logic.
+artifact_desc: |
+  Список bounded contexts с entities/aggregates, карта «модуль кода → контекст», список мест где domain смешан с infrastructure.
+summary: 'Определяет, где заканчивается одна доменная модель и начинается другая. Сервис без явных границ контекста неизбежно смешивает domain logic с infrastructure и чужими моделями.'
+---
+
+## The Algorithm
+
+1. **Найдите subdomain**: Какую бизнес-область покрывает сервис — одну или несколько?
+2. **Выделите aggregates**: Группы объектов с invariant, изменяемые как единое целое.
+3. **Нарисуйте границы контекста**: Где модель «заканчивается» — по языку, не по repo.
+4. **Разделите domain и infrastructure**: Repositories, controllers — infrastructure; правила расчёта — domain.
+5. **Отметьте anemic domains**: Логика в services вместо entities — сигнал размытых границ.
+
+## Anti-patterns
+
+- **BC = microservice**: Контекст — semantic boundary, deploy unit может быть другим.
+- **Anemic domain model**: Entities без поведения — DDD на бумаге, transaction script в коде.
+- **Big ball of mud как один BC**: «Весь монолит — один контекст» обычно означает «контекст не определён».

@@ -1,0 +1,38 @@
+---
+title: Context Mapping
+subtitle: Связи между bounded contexts
+difficulty: medium
+domain_layer: Domain
+problems:
+  - undrsys-005
+  - bound-001
+  - bound-002
+  - bound-004
+  - bound-005
+  - know-006
+  - complex-002
+  - complex-004
+intent: |
+  Context Mapping описывает, как bounded contexts связаны между собой: кто upstream, кто downstream, нужен ли anti-corruption layer. Без этой карты интеграции между модулями становятся скрытым coupling.
+prompt: |
+  Построй Context Map для [название системы]. Для каждой пары контекстов определи паттерн связи: Partnership, Shared Kernel, Customer-Supplier, Conformist, ACL, Open Host Service. Укажи, где нужен anti-corruption layer и какие модели «протекают» между контекстами.
+theory_anchor: |
+  Context Map материализует теорию междоменных отношений. Связь между контекстами — это политическое и техническое решение: кто диктует модель, кто адаптируется. Явная карта предотвращает неявный Conformist везде.
+artifact_desc: |
+  Context Map diagram (DDD notation) + таблица: контекст A → контекст B → паттерн связи → ACL needed? → owner команда.
+summary: 'Описывает, как доменные контексты связаны: кто upstream, кто downstream, где нужен anti-corruption layer. Без этой карты интеграции между модулями становятся скрытым coupling.'
+---
+
+## The Algorithm
+
+1. **Список контекстов из DDD exercise**: Используйте результат предыдущего шага.
+2. **Определите направление зависимости**: Кто от чего зависит semantically.
+3. **Назначьте паттерн связи**: Customer-Supplier если есть переговоры; Conformist если legacy диктует.
+4. **Отметьте ACL**: Где внешняя модель «заражает» ваш domain — нужен translation layer.
+5. **Свяжите с командами**: Conway's law — кто владеет каждым контекстом.
+
+## Anti-patterns
+
+- **Везде Shared Kernel**: Shared Kernel — исключение, не default. Большинство связей — Customer-Supplier или ACL.
+- **ACL как mapper в controller**: Anti-corruption layer — domain concept, не один DTO class.
+- **Игнорировать legacy как контекст**: Mainframe с фиксированной моделью — типичный upstream Conformist.

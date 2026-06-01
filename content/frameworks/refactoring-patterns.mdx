@@ -1,0 +1,31 @@
+---
+title: Refactoring Patterns
+subtitle: Безопасные структурные изменения
+difficulty: medium
+domain_layer: Evolution
+problems:
+  - complex-005
+intent: |
+  Refactoring Patterns (Extract Method, Move Module, Introduce Facade, …) — каталог приёмов для упрощения структуры без изменения поведения. Локализует сложность через маленькие, проверяемые шаги вместо «перепишем всё».
+prompt: |
+  Примени Refactoring Patterns к [модуль / класс с высокой complexity]. Измерь: cyclomatic complexity, lines per file, dependency count. Выбери 3 refactoring moves из каталога (Extract, Move, Inline, Introduce Parameter Object, …). Для каждого: before/after, тесты-страховка, порядок применения.
+theory_anchor: |
+  Refactoring материализует теорию инкрементального улучшения. Каждый move — гипотеза «структура стала проще, поведение то же». Tests + small steps делают изменения предсказуемыми.
+artifact_desc: |
+  Refactoring plan: target → smell → pattern → steps. Before/after metrics. PR sequence (one pattern per PR).
+summary: 'Каталог приёмов для упрощения структуры без изменения поведения — Extract Method, Move Module, Introduce Facade. Локализует сложность через маленькие проверяемые шаги.'
+---
+
+## The Algorithm
+
+1. **Identify smell**: Long method, feature envy, shotgun surgery, divergent change — from C4/component analysis.
+2. **Ensure test coverage**: Characterization or unit tests — green before refactor.
+3. **Pick one pattern**: Smallest move that addresses smell — Extract Method before Extract Class.
+4. **Apply and verify**: Tests green; metrics improved.
+5. **Repeat**: Chain small refactors; commit after each green state.
+
+## Anti-patterns
+
+- **Refactor without tests**: «Потом напишем» — recipe for regression.
+- **Big bang rewrite labeled refactor**: Behavior change smuggled in — это не refactoring.
+- **Refactor hottest path first**: Start with bounded, test-covered module — build confidence.

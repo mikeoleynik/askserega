@@ -1,0 +1,31 @@
+---
+title: Team Topologies
+subtitle: Организация команд для flow
+difficulty: medium
+domain_layer: Operational
+problems:
+  - bound-004
+intent: |
+  Team Topologies — модель организации команд: stream-aligned, platform, enabling, complicated-subsystem. Помогает определить, какой сервис должен быть самостоятельным и какая команда его владеет для независимого lifecycle.
+prompt: |
+  Примени Team Topologies к [название организации / платформы]. Классифицируй команды: stream-aligned, platform, enabling, complicated-subsystem. Для каждого сервиса/bounded context: какая команда должна владеть, какой тип interaction (X-as-a-Service, collaboration, facilitation). Отметь сервисы с неправильными границами — слишком широкие или shared ownership.
+theory_anchor: |
+  Team Topologies материализует теорию cognitive load и flow. Граница сервиса имеет смысл, если команда может владеть им end-to-end без постоянной координации с половиной компании.
+artifact_desc: |
+  Карта команд по типам Topologies, матрица «сервис → owning team → interaction mode», список кандидатов на split/merge сервисов.
+summary: 'Модель типов команд — stream-aligned, platform, enabling, complicated-subsystem. Помогает определить, какой сервис должен быть автономным и какая команда им владеет.'
+---
+
+## The Algorithm
+
+1. **Карта stream-aligned teams**: Какие business streams? Какие команды их обслуживают?
+2. **Выделите platform teams**: Internal APIs, CI/CD, observability — shared capabilities.
+3. **Найдите complicated-subsystem**: ML, legacy, highly specialized — нужна dedicated team.
+4. **Сопоставьте с сервисами**: Один stream-aligned team ≈ один bounded context / product slice.
+5. **Определите interaction modes**: X-as-a-Service для platform; collaboration — временно, с exit criteria.
+
+## Anti-patterns
+
+- **Каждая команда — platform team**: Stream-aligned teams должны быть большинством.
+- **Enabling team forever**: Facilitation должна иметь цель «сделать себя ненужной».
+- **Topologies без DDD boundaries**: Org design без domain analysis — Conway в обратную сторону.

@@ -1,0 +1,31 @@
+---
+title: Responsibility Mapping
+subtitle: Владение компонентами и модулями
+difficulty: low
+domain_layer: Domain
+problems:
+  - undrsys-005
+intent: |
+  Responsibility Mapping фиксирует, за что отвечает каждый компонент, модуль или команда — и что явно НЕ входит в их зону. Завершает картину границ: от domain model до operational ownership.
+prompt: |
+  Построй Responsibility Map для [название сервиса / системы]. Для каждого компонента: primary responsibility, secondary responsibilities, explicit non-responsibilities. Привяжи к командам (Conway): кто owner, кто consumer. Отметь «orphan responsibilities» — функции без явного владельца.
+theory_anchor: |
+  Карта ответственности материализует теорию ownership. «Кто за это отвечает?» — базовый вопрос архитектуры. Без явного mapping ответственность расползается или дублируется между командами.
+artifact_desc: |
+  Таблица RACI или responsibility matrix: компонент → primary responsibility → owner team → non-responsibilities. Список orphan responsibilities с рекомендацией по назначению.
+summary: 'Фиксирует, за что отвечает каждый компонент, модуль или команда — и что явно не входит в их зону. Завершает картину границ от domain model до operational ownership.'
+---
+
+## The Algorithm
+
+1. **Список компонентов**: Из hexagonal/DDD exercise — modules, services, bounded contexts.
+2. **Primary responsibility**: Одна главная функция на компонент — «этот модуль существует чтобы…».
+3. **Explicit non-responsibilities**: Что компонент НЕ делает — так же важно, как что делает.
+4. **Привязка к командам**: Owner team для каждого компонента.
+5. **Найдите gaps**: Функции, которые «кто-то должен делать», но owner не назван.
+
+## Anti-patterns
+
+- **Всё — shared responsibility**: Если «вся команда отвечает» — никто не отвечает.
+- **Responsibility = job title**: «Backend dev» — не responsibility. «Validate payment» — responsibility.
+- **Карта без non-responsibilities**: Без «мы НЕ делаем X» границы размываются при первом инциденте.

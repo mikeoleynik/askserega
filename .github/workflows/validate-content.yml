@@ -1,0 +1,25 @@
+name: Validate Content
+on:
+  pull_request:
+    paths:
+      - "content/frameworks/**/*.mdx"
+  push:
+    branches: [main]
+    paths:
+      - "content/frameworks/**/*.mdx"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build
+      - name: Validate frontmatter
+        run: node scripts/validate-frontmatter.mjs
+      - name: Check link consistency
+        run: node scripts/check-links.mjs

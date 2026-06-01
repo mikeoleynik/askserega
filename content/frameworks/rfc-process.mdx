@@ -1,0 +1,32 @@
+---
+title: RFC Process
+subtitle: Формальный review значимых изменений
+difficulty: low
+domain_layer: Evolution
+problems:
+  - know-002
+  - know-006
+intent: |
+  RFC Process — формальный процесс предложения и review значимых изменений до реализации. Фиксирует не только итоговое решение (как ADR), но и обсуждение, альтернативы и dissent — «почему» до merge.
+prompt: |
+  Спроектируй RFC Process для команды [название]. Определи: когда нужен RFC (threshold), шаблон (problem, proposal, alternatives, rollout, open questions), lifecycle (draft → review → accepted/rejected). Напиши RFC-0001 для [конкретное предложение]: заполните все секции шаблона.
+theory_anchor: |
+  RFC материализует коллективную теорию до commit. Обсуждение в RFC — snapshot инженерного мышления команды; accepted RFC становится input для ADR и reference architecture.
+artifact_desc: |
+  RFC template в `docs/rfc/0000-template.md`, процесс (who reviews, timeline, where published). Пример заполненного RFC-0001 для реального или учебного кейса.
+summary: 'Процесс предложения и обсуждения значимых изменений до реализации. Фиксирует не только итог (как ADR), но и альтернативы, dissent и контекст обсуждения.'
+---
+
+## The Algorithm
+
+1. **Определите threshold**: Когда RFC обязателен — new service, breaking API, data model change, cross-team impact.
+2. **Создайте шаблон**: Problem → Proposal → Alternatives → Trade-offs → Rollout → Open Questions.
+3. **Назначьте reviewers**: Domain owners, affected teams — до coding.
+4. **Проведите review window**: Async comments, sync discussion if needed — зафиксируйте в RFC.
+5. **Close with outcome**: Accepted → ADR; Rejected → archive with reasons; Superseded → link to new RFC.
+
+## Anti-patterns
+
+- **RFC после реализации**: Post-facto RFC — theatre, не process.
+- **RFC без alternatives**: Proposal без 2+ alternatives — не decision record.
+- **RFC graveyard**: Accepted RFCs без ADR follow-up — knowledge теряется на handoff.

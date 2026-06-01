@@ -1,0 +1,36 @@
+---
+title: Hexagonal Architecture
+subtitle: Порты и адаптеры для границ
+difficulty: medium
+domain_layer: Structural
+problems:
+  - undrsys-005
+  - bound-003
+  - bound-005
+  - complex-002
+  - complex-004
+  - complex-005
+intent: |
+  Hexagonal Architecture (Ports & Adapters) отделяет domain logic от infrastructure через явные порты. Сервис получает чёткую границу: «что мы решаем» внутри, «как подключаемся к миру» — снаружи через адаптеры.
+prompt: |
+  Примени Hexagonal Architecture к [название сервиса / модуля]. Выдели: domain core (entities, use cases), inbound ports (API, CLI), outbound ports (repo, messaging). Для каждого адаптера укажи реализацию (REST controller, Postgres repo, Kafka publisher). Отметь, где domain напрямую зависит от framework/infrastructure — нарушения границы.
+theory_anchor: |
+  Hexagonal материализует теорию изоляции domain logic. Порт — контракт «что нужно domain», адаптер — «как это реализовано». Граница делает external concerns заменяемыми без переписывания бизнес-правил.
+artifact_desc: |
+  Диаграмма hexagon с ports/adapters, список нарушений (domain imports framework), план рефакторинга top-3 нарушений.
+summary: 'Отделяет domain logic от infrastructure через явные порты. «Что решаем» — внутри, «как подключаемся к миру» — снаружи через адаптеры.'
+---
+
+## The Algorithm
+
+1. **Найдите domain core**: Use cases и entities без import framework/ORM/HTTP.
+2. **Определите inbound ports**: Интерфейсы, через которые мир вызывает domain (CreateOrderUseCase).
+3. **Определите outbound ports**: Интерфейсы, которые domain вызывает (OrderRepository, PaymentGateway).
+4. **Назначьте adapters**: Controllers, repositories, message handlers — реализации портов.
+5. **Проверьте dependency direction**: Все стрелки идут inward — infrastructure зависит от domain, не наоборот.
+
+## Anti-patterns
+
+- **Ports на каждый CRUD**: Не каждый repository method — port. Порты отражают domain needs.
+- **Anemic hexagon**: Domain core пустой, вся логика в «application service» — форма без содержания.
+- **Adapter = god class**: Один adapter на 5000 строк — разбейте по bounded context.

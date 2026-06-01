@@ -1,0 +1,31 @@
+---
+title: Characterization Testing
+subtitle: Фиксация поведения legacy перед изменениями
+difficulty: medium
+domain_layer: Evolution
+problems:
+  - complex-006
+intent: |
+  Characterization Testing — тесты, которые фиксируют текущее поведение legacy-кода «as is», без претензии на correctness. Страховка перед рефакторингом: если test green после change — behavior preserved (including bugs).
+prompt: |
+  Напиши Characterization Tests для [legacy module / endpoint]. Запусти код с разными inputs (including edge cases), capture outputs. Зафиксируй как approval/golden files или snapshot tests. Отметь undocumented behaviors — «surprises» для команды. Предложи минимальный test suite перед первым refactor PR.
+theory_anchor: |
+  Characterization tests материализуют теорию «мы не знаем spec, но знаем reality». Legacy без docs — black box; tests — executable observation log. Strangler Fig без safety net — gambling.
+artifact_desc: |
+  Golden files / snapshot tests covering key paths. Document «known quirks». CI gate: characterization suite must pass on every PR touching module.
+summary: 'Тесты, которые записывают текущее поведение кода «as is», без претензии на корректность. Страховка перед рефакторингом: зелёный тест после изменения означает сохранение поведения.'
+---
+
+## The Algorithm
+
+1. **Choose seam**: Entry point — HTTP handler, public method, CLI command.
+2. **Explore inputs**: Happy path, nulls, empty, max values, known production edge cases.
+3. **Capture outputs**: Write golden files; don't assert «correct» — assert «same as before».
+4. **Run in CI**: Baseline on main; PR diff shows intentional behavior change.
+5. **Refactor under green**: Strangler slice, extract, replace — tests guard regression.
+
+## Anti-patterns
+
+- **Characterization as permanent spec**: Goal — understand + refactor, eventually replace with real specs.
+- **Too few inputs**: One golden file — misses branches; cover decision points.
+- **Editing golden files to make tests pass**: Diff review обязателен — intentional change only.

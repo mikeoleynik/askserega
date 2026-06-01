@@ -1,0 +1,31 @@
+---
+title: Modular Monolith
+subtitle: Модули с жёсткими границами в монолите
+difficulty: medium
+domain_layer: Structural
+problems:
+  - complex-005
+intent: |
+  Modular Monolith — монолит с жёсткими модульными границами: каждый module — потенциальный будущий сервис, изменения локализованы внутри module API. Альтернатива premature microservices для сложного, но ещё не split-ready кода.
+prompt: |
+  Спроектируй Modular Monolith для [название системы]. Выдели modules по bounded contexts. Для каждого: public API (facade), internal implementation, allowed dependencies. Запрети cross-module imports except through published interfaces. Отметь «god modules» — кандидаты на split или refactor.
+theory_anchor: |
+  Modular Monolith материализует теорию локализованной сложности. Module boundary — compile-time enforcement of domain boundary. Complexity живёт внутри module; снаружи — только контракт.
+artifact_desc: |
+  Module map diagram, dependency rules (ArchUnit/dependency-cruiser config), список module public APIs, violations report текущего codebase.
+summary: 'Монолит с чёткими модульными границами: каждый module — потенциальный будущий сервис, изменения локализованы внутри module API. Альтернатива premature microservices.'
+---
+
+## The Algorithm
+
+1. **Identify modules from DDD**: Bounded context ≈ module candidate.
+2. **Define public API per module**: Facade interface — единственная точка входа для других modules.
+3. **Enforce dependency rules**: Module A → Module B only via B's public API; no internal imports.
+4. **Automate in CI**: ArchUnit, custom lint — fail on boundary violation.
+5. **Plan extraction path**: Module with stable API + low coupling — first microservice candidate.
+
+## Anti-patterns
+
+- **Modules = folders without rules**: Без enforcement boundaries — package structure theatre.
+- **Shared kernel everywhere**: Shared DB/models между modules — distributed monolith inside one deploy.
+- **Modular monolith forever**: Goal — optionality to extract, not eternal monolith dogma.

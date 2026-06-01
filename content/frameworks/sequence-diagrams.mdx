@@ -1,0 +1,32 @@
+---
+title: Sequence Diagrams
+subtitle: Обмен сообщениями во времени
+difficulty: low
+domain_layer: Behavioral
+problems:
+  - undrsys-004
+  - complex-003
+intent: |
+  Sequence Diagrams показывают обмен сообщениями между участниками во времени: кто кому и в каком порядке отправляет вызовы. Идеально для детализации одного runtime flow до уровня конкретных API и событий.
+prompt: |
+  Построй Sequence Diagram для сценария [название сценария]. Участники: сервисы, БД, очереди, внешние API. Покажи sync-вызовы, async-сообщения, return values. Отметь альтернативные ветки (ошибка, timeout) если они критичны.
+theory_anchor: |
+  Диаграмма последовательности материализует временную теорию взаимодействия. Порядок сообщений — это контракт поведения: если реальный trace не совпадает с диаграммой, теория устарела.
+artifact_desc: |
+  Sequence diagram в PlantUML, Mermaid или draw.io для одного сценария. Ссылка на соответствующий Runtime Flow Map как parent document.
+summary: 'Показывает, кто кому и в каком порядке отправляет вызовы. Детализирует один runtime flow до уровня конкретных API, событий и таймингов.'
+---
+
+## The Algorithm
+
+1. **Возьмите один flow из Runtime Flow Mapping**: Не рисуйте с нуля — детализируйте существующий hop list.
+2. **Определите lifelines**: Каждый участник — отдельная колонка (сервис, DB, queue).
+3. **Нарисуйте happy path**: Синхронные — сплошные стрелки, async — open arrow.
+4. **Добавьте activation boxes**: Когда участник «активен» во время обработки.
+5. **Валидируйте по trace**: Сравните с distributed trace в staging.
+
+## Anti-patterns
+
+- **Диаграмма на 30 участников**: Разбейте на sub-diagrams по bounded context.
+- **Показывать каждый SQL-запрос**: Группируйте «persist order» вместо 15 INSERT.
+- **Рисовать без temporal order**: Sequence diagram без оси времени — не sequence diagram.

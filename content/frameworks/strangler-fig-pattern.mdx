@@ -1,0 +1,32 @@
+---
+title: Strangler Fig Pattern
+subtitle: Постепенная замена legacy
+difficulty: medium
+domain_layer: Evolution
+problems:
+  - bound-003
+  - complex-006
+intent: |
+  Strangler Fig Pattern — постепенное выделение функциональности из монолита: новый сервис «оборачивает» старый, перехватывая трафик по частям, пока legacy не можно безопасно отключить.
+prompt: |
+  Спланируй Strangler Fig migration для выделения [название capability] из [монолит]. Определи: seam (граница перехвата), routing layer, порядок перехвата endpoints/events. Для каждого шага: риски, rollback, критерий готовности к следующему шагу. Предложи первый «тонкий срез» — минимальный vertical slice для старта.
+theory_anchor: |
+  Strangler Fig материализует теорию эволюционной декомposition. Монолит не «вырезают» — его функции постепенно замещают, сохраняя работоспособность системы на каждом шаге.
+artifact_desc: |
+  План миграции: фазы, routing diagram (facade/proxy → new service → legacy), чеклист per-phase, первый vertical slice с acceptance criteria.
+summary: 'Постепенное выделение функциональности из монолита: новый сервис оборачивает старый и перехватывает трафик по частям, пока legacy можно безопасно отключить.'
+---
+
+## The Algorithm
+
+1. **Найдите seam**: Граница, где можно перехватить вызовы — API gateway, message bus, feature flag.
+2. **Постройте facade**: Routing layer направляет часть трафика в новый сервис, остальное — в монолит.
+3. **Выберите первый slice**: Один endpoint или один domain event — минимальный, но end-to-end.
+4. **Итерируйте**: Перехватывайте по одной capability; legacy shrink, new service grow.
+5. **Retire legacy**: Когда traffic = 0 и data migrated — удалите старый код.
+
+## Anti-patterns
+
+- **Big bang extraction**: «Выделим весь сервис за спринт» — противоположность Strangler Fig.
+- **Strangler без routing layer**: Прямая замена вызовов в коде монолита — нет rollback.
+- **Игнорировать data migration**: Перехват API без плана данных — split brain.
