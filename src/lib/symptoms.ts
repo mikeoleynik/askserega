@@ -269,7 +269,7 @@ export const symptoms: Symptom[] = [
     frameworks: [
       "adr",
       "reference-architecture",
-      "decision-mapping",
+      "architecture-decision-mapping",
       "rfc-process",
       "theory-graph",
     ],

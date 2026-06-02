@@ -5,27 +5,105 @@ difficulty: medium
 domain_layer: Runtime
 problems:
   - complex-001
+links:
+  - label: 'A Guide to Contract Testing'
+    url: 'https://www.blazemeter.com/blog/contract-testing'
+  - label: 'Contract testing (dev.to)'
+    url: 'https://dev.to/keploy/what-is-contract-testing-a-knowledge-guide-1l10'
 intent: |
-  Contract Testing проверяет, что consumer и provider согласованы по контракту API — без end-to-end тестов всей системы. Делает последствия изменений предсказуемыми: breaking change ловится до production.
+  Гарантировать, что вызывающая сторона (consumer) и поставщик сервиса (provider) совместимы по API, и автоматически выявлять ломающие изменения (breaking changes) до деплоя в продакшен, не запуская ресурсоемкие сквозные (end-to-end) тесты.
 prompt: |
-  Спроектируй Contract Testing для [consumer service] ↔ [provider service]. Определи контракт (REST/OpenAPI, events schema, gRPC proto). Опиши consumer-driven contracts: expectations consumer, verification на стороне provider. Предложи первый контракт для самого хрупкого integration point.
+  Спроектируй Contract Testing для интеграции [Название Consumer-сервиса] ↔ [Название Provider-сервиса].
+
+  Выполни задачу по шагам:
+
+  1. Выбери самую хрупкую и критичную точку интеграции (integration point) между ними для первого контракта и обоснуй выбор.
+  2. Определи формат и схему контракта (REST/OpenAPI, JSON Schema, gRPC proto или AsyncAPI для event-driven).
+  3. Опиши Consumer-driven подход:
+    - Сформулируй ожидания (expectations) на стороне Consumer (какие поля/статусы критичны, какие моки генерировать).
+    - Опиши схему верификации на стороне Provider (как запускать тесты на реальном коде поставщика).
+  4. Напиши пример спецификации контракта (в коде или JSON/YAML) и шаблон теста для Consumer и Provider на [стек/язык, например: Go/Java/TS/Pact].
+
+  Результат должен быть готов к переносу в репозиторий.
 theory_anchor: |
-  Contract Testing материализует теорию границ интеграции. Контракт — явное соглашение между сервисами; тест фиксирует его в коде. Изменение provider без обновления contract — visible failure, не surprise в prod.
-artifact_desc: |
-  Contract files (Pact, Spring Cloud Contract, или OpenAPI diff в CI). Список covered integration points. CI job: provider verification on every PR.
-summary: Проверяет согласованность consumer и provider по API-контракту без полного end-to-end. Breaking changes ловятся до production — последствия изменений становятся предсказуемыми.
+  Прозрачную и безопасную интеграцию сервисов. Контрактное тестирование переводит абстрактные договоренности между командами в явный код. Вы получаете автоматический контроль совместимости: любое ломающее изменение на стороне поставщика сервиса гарантированно валит сборку в CI, исключая неожиданные сбои на продакшене.
+artifacts:
+  - label: Файлы контрактов (Пример JSON-схемы запроса/ответа)
+    filename: contract.json
+    example: |
+      {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "UserIntegrationContract",
+        "type": "object",
+        "properties": {
+          "request": {
+            "type": "object",
+            "properties": {
+              "user_id": { "type": "string", "format": "uuid" }
+            },
+            "required": ["user_id"]
+          },
+          "response": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string", "format": "uuid" },
+              "email": { "type": "string", "format": "email" },
+              "status": { "type": "string", "enum": ["active", "suspended"] }
+            },
+            "required": ["id", "email", "status"]
+          }
+        }
+      }
+  - label: Шаблон конфигурации CI (Пайплайн проверки на GitHub Actions)
+    filename: github-actions-demo.yml
+    example: |
+      name: Contract Verification
+
+      on:
+        pull_request:
+          branches: [ main ]
+
+      jobs:
+        contract-test:
+          runs-on: ubuntu-latest
+          steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Environment
+              uses: actions/setup-node@v4 # или ваш стек (Go, Java, Python)
+              with:
+                node-version: '20'
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Run Provider Verification
+              run: npm run test:contracts:verify
+              env:
+                CONTRACT_BROKER_URL: ${{ secrets.CONTRACT_BROKER_URL }}
+                CONTRACT_BROKER_TOKEN: ${{ secrets.CONTRACT_BROKER_TOKEN }}
+  - label: Матрица покрытия интеграции (Реестр контрактов)
+    filename: registry.md
+    format: markdown
+    example: |
+      | Вызывающий сервис (Consumer) | Поставщик (Provider) | Точка интеграции (Эндпоинт / Событие) | Тип контракта (Pact / OpenAPI / Proto) | Статус покрытия |
+      | --- | --- | --- | --- | --- |
+      | billing-service | user-service | GET /v1/users/id | OpenAPI / JSON Schema | Покрыто |
+      | notification-service | order-service | event: order_created | AsyncAPI / Avro | В разработке |
+summary: 'Гарантирует совместимость сервисов по API без запуска тяжелых сквозных тестов. Ломающие изменения отлавливаются до деплоя, делая процесс обновления предсказуемым и безопасным.'
 ---
 
 ## The Algorithm
 
-1. **Найдите critical integration points**: Из Dependency Mapping + Runtime Flow — top-5 хрупких связей.
-2. **Выберите формат**: Pact (consumer-driven), OpenAPI diff, schema registry для events.
-3. **Напишите первый contract**: Minimal happy path + 1–2 error cases.
-4. **Provider verification в CI**: Provider build fails if contract broken.
-5. **Versioning strategy**: Как эволюционировать contract без breaking consumers.
+1. **Найти критичные точки интеграции**: Выбрать топ-5 самых хрупких связей на основе карты зависимостей (Dependency Mapping) и анализа трафика (Runtime Flow).
+2. **Выбрать формат**: Определить инструмент — Pact (подход consumer-driven), сравнение схем OpenAPI (OpenAPI diff) или реестр схем (Schema Registry) для событийной архитектуры.
+3. **Написать первый контракт**: Покрыть минимальный успешный сценарий (happy path) и 1–2 основных кейса с ошибками.
+4. **Настроить проверку на стороне поставщика в CI**: Автоматизировать верификацию (Provider verification), чтобы сборка поставщика сервиса падала при нарушении контракта.
+5. **Внедрить стратегию версионирования**: Определить правила эволюции контрактов, чтобы изменения на бэкенде не ломали текущих потребителей.
 
 ## Anti-patterns
 
-- **Contract tests как E2E substitute**: Contracts guard boundaries, not business logic.
-- **Contracts без CI**: Файлы в repo, но не verified — dead documentation.
-- **One giant contract**: Per integration point — отдельный contract.
+- **Использовать контрактные тесты вместо сквозных (E2E)**: Контракты защищают только границы сервисов и форматы данных, но не тестируют сквозную бизнес-логику системы.
+- **Проверки без автоматизации в CI**: Если файлы контрактов лежат в репозитории, но не проверяются при каждом пуле — это мертвая документация, которая быстро устареет.
+- **Один гигантский контракт на всё**: Попытка описать всё взаимодействие сервисов в одном файле приводит к путанице. Для каждой точки интеграции (эндпоинта или события) должен быть отдельный изолированный контракт.

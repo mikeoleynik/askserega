@@ -5,27 +5,40 @@ difficulty: medium
 domain_layer: Evolution
 problems:
   - complex-006
+links:
+  - label: 'Characterization test'
+    url: 'https://en.wikipedia.org/wiki/Characterization_test'
+
 intent: |
-  Characterization Testing — тесты, которые фиксируют текущее поведение legacy-кода «as is», без претензии на correctness. Страховка перед рефакторингом: если test green после change — behavior preserved (including bugs).
+  Зафиксировать текущее поведение системы перед рефакторингом, чтобы гарантировать сохранение этого поведения после изменений.
 prompt: |
-  Напиши Characterization Tests для [legacy module / endpoint]. Запусти код с разными inputs (including edge cases), capture outputs. Зафиксируй как approval/golden files или snapshot tests. Отметь undocumented behaviors — «surprises» для команды. Предложи минимальный test suite перед первым refactor PR.
+  Напиши Characterization Tests для [модуль / endpoint].
+
+  Исследуй текущее поведение системы через реальные вызовы и набор репрезентативных входных данных, включая граничные и нестандартные случаи. Зафиксируй фактические результаты без предположений о корректности поведения. Используй snapshot-, golden- или approval-тесты там, где это уместно.
+
+  Выяви и задокументируй неочевидное, противоречивое или недокументированное поведение. Отдельно отметь зависимости от порядка вызовов, состояния, времени, конфигурации или внешних систем.
+
+  Предложи минимальный, но достаточный набор тестов, который позволит безопасно начать рефакторинг и обнаружить непреднамеренные изменения поведения.
 theory_anchor: |
-  Characterization tests материализуют теорию «мы не знаем spec, но знаем reality». Legacy без docs — black box; tests — executable observation log. Strangler Fig без safety net — gambling.
+  Набор тестов, фиксирующих текущее поведение системы и позволяющих безопасно изменять legacy-код без риска непреднамеренных изменений.
 artifact_desc: |
-  Golden files / snapshot tests covering key paths. Document «known quirks». CI gate: characterization suite must pass on every PR touching module.
+  - Golden-, approval- или snapshot-тесты для ключевых сценариев и граничных случаев.
+  - Зафиксированное недокументированное поведение и известные особенности системы.
+  - Минимальный набор тестов для безопасного начала рефакторинга.
+  - Проверка в CI: изменения модуля не должны нарушать зафиксированное поведение без явного обновления эталонов.
 summary: 'Тесты, которые записывают текущее поведение кода «as is», без претензии на корректность. Страховка перед рефакторингом: зелёный тест после изменения означает сохранение поведения.'
 ---
 
 ## The Algorithm
 
-1. **Choose seam**: Entry point — HTTP handler, public method, CLI command.
-2. **Explore inputs**: Happy path, nulls, empty, max values, known production edge cases.
-3. **Capture outputs**: Write golden files; don't assert «correct» — assert «same as before».
-4. **Run in CI**: Baseline on main; PR diff shows intentional behavior change.
-5. **Refactor under green**: Strangler slice, extract, replace — tests guard regression.
+1. **Выберите точку входа**: HTTP-обработчик, публичный метод, CLI-команда или другой внешний контракт.
+2. **Исследуйте входные данные**: штатные сценарии, пустые значения, граничные случаи, типичные ошибки и известные production-кейсы.
+3. **Зафиксируйте результаты**: сохраните текущее поведение в golden-, approval- или snapshot-тестах. Проверяйте не корректность, а неизменность поведения.
+4. **Запустите в CI**: используйте зафиксированное поведение как базовый эталон и отслеживайте изменения через тесты.
+5. **Рефакторьте под защитой тестов**: выделяйте части системы, упрощайте код и заменяйте реализации, сохраняя зелёный статус тестов.
 
 ## Anti-patterns
 
-- **Characterization as permanent spec**: Goal — understand + refactor, eventually replace with real specs.
-- **Too few inputs**: One golden file — misses branches; cover decision points.
-- **Editing golden files to make tests pass**: Diff review обязателен — intentional change only.
+- **Использовать Characterization Tests как постоянную спецификацию**: их задача — зафиксировать текущее поведение и помочь в рефакторинге, а не заменить требования.
+- **Покрывать слишком мало сценариев**: несколько тестов не дают полной картины поведения. Проверяйте ключевые ветки, граничные случаи и типичные ошибки.
+- **Обновлять эталоны только ради зелёных тестов**: любое изменение зафиксированного поведения должно быть осознанным и проходить через ревью.
