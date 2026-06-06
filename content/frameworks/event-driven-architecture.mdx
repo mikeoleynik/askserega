@@ -6,27 +6,99 @@ domain_layer: Runtime
 problems:
   - bound-005
   - complex-003
+links:
+  - label: 'Событийно-ориентированная архитектура'
+    url: 'https://systems.education/event-driven-architecture'
+  - label: 'Принципы, преимущества и инструменты реализации EDA'
+    url: 'https://yandex.cloud/ru/blog/event-driven-architecture'
 intent: |
-  Event-Driven Architecture (EDA) ослабляет coupling через асинхронный обмен событиями: сервисы публикуют facts, подписчики реагируют без прямых sync-вызовов. Подходит для снижения хрупких point-to-point зависимостей.
+  Обеспечить слабую связанность (loose coupling) микросервисов за счет перехода от синхронных запросов к асинхронному обмену сообщениями. Это позволяет изолировать компоненты друг от друга, устранить хрупкие point-to-point зависимости и повысить общую отказоустойчивость системы.
 prompt: |
-  Спроектируй Event-Driven integration для [сценарий / bounded context]. Определи: domain events, publishers, subscribers, event schema, idempotency strategy. Замени 2–3 sync-вызова на event flow. Отметь eventual consistency trade-offs. Предложи первый event для пилота с минимальным blast radius.
+  Спроектируй интеграцию на базе Event-Driven Architecture (EDA) для следующего контекста: [Опиши сценарий / Bounded Context и текущую проблему].
+
+  Выполни проектирование по следующим шагам и оформи ответ строго по структуре:
+
+  1. Анализ потока данных: Выдели 2–3 существующих синхронных вызова (RPC/REST) и покажи, как они заменяются на асинхронный Event Flow.
+  2. Спецификация событий (Domain Events): Определи ключевые бизнес-события в формате «Существительное + Глагол в прошедшем времени». Укажи для каждого: Publisher, Subscribers и пример Event Schema (JSON) с метаданными и полезной нагрузкой (Payload).
+  3. Инженерные гарантии: Предложи конкретную стратегию обеспечения идемпотентности на стороне подписчиков и схему обработки ошибок (DLQ, Retry Policy).
+  4. Компромиссы (Trade-offs): Опиши возникающие риски согласованности в конечном счете (Eventual Consistency) и способы их минимизации для пользователя.
+  5. Пилотный запуск: Предложи одно стартовое событие для MVP с минимальной зоной поражения (Blast Radius), которое позволит протестировать инфраструктуру без риска для критических процессов.
 theory_anchor: |
-  EDA материализует теорию слабой связанности через временное разделение. Publisher не знает subscribers — coupling по контракту события, не по implementation. Теория системы включает «что произошло», а не только «кто кого вызвал».
-artifact_desc: |
-  Event catalog: event name → schema → publisher → subscribers. Diagram async flow. Idempotency/retry/DLQ strategy. Список sync calls, заменённых events.
-summary: 'Ослабляет coupling через асинхронный обмен событиями: сервисы публикуют факты, подписчики реагируют без прямых sync-вызовов. Подходит для снижения хрупких point-to-point зависимостей.'
+  Временное и пространственное разделение сервисов: Издатель (Publisher) ничего не знает о подписчиках (Subscribers) — связь происходит только на уровне контракта события, а не конкретной реализации.
+
+  Полную изоляцию сбоев: Падение или перегрузка одного сервиса больше не вызывает лавинообразный отказ всей системы (каскадные сбои).
+artifacts:
+  - label: пример Mermaid flowchart
+    filename: sequence-diagram.md
+    open_url: https://mermaid.live/edit
+    open_label: Открыть в Mermaid Live
+    example: |
+      sequenceDiagram
+        autonumber
+        actor Client as Клиент
+        participant Order as Order-Service
+        participant Broker as Брокер (Kafka/Rabbit)
+        participant Inventory as Inventory-Service
+
+        Client->>Order: Создать заказ (REST)
+        Order->>Order: Сохранить в БД
+        Order-->>Client: Заказ принят (HTTP 202)
+
+        Note over Order,Broker: Асинхронный контур
+        Order->>Broker: Публикация события OrderPlaced
+        Broker-->>Inventory: Доставка события OrderPlaced
+        Inventory->>Inventory: Резерв товара под заказ
+  - label: Реестр критических узлов системы
+    filename: registry-table.md
+    format: markdown
+    example: |
+      | Событие (Event Name) | Схема данных (Schema Version) | Издатель (Publisher) | Подписчики (Subscribers) | Описание бизнес-факта |
+      | --- | --- | --- | --- | --- |
+      | `OrderPlaced` | `v1.2.0` (JSON-Schema) | `Order-Service` | `Inventory-Service`, `Notification-Service` | Клиент успешно оформил заказ в корзине |
+      | `PaymentCaptured` | `v1.0.1` (Protobuf) | `Billing-Service` | `Order-Service`, `Delivery-Service` | Деньги на карте клиента успешно захолдированы |
+  - label: Пример Event Schema (JSON)
+    filename: event-schema.json
+    format: code
+    example: |
+      {
+        "schemaId": 4021,
+        "eventId": "a7b8c9d0-1234-5678-90ab-cdef12345678",
+        "eventType": "OrderPlaced",
+        "eventVersion": "1.2.0",
+        "timestamp": "2026-06-03T05:45:00Z",
+        "producer": "order-service",
+        "data": {
+          "orderId": "ord_987654321",
+          "customerId": "usr_555aaabbb",
+          "currency": "RUB",
+          "totalAmount": 15400.00,
+          "items": [
+            {
+              "sku": "SKU-BOXING-GLOVES-16OZ",
+              "quantity": 1,
+              "price": 8900.00
+            },
+            {
+              "sku": "SKU-KETTLEBELL-24KG",
+              "quantity": 1,
+              "price": 6500.00
+            }
+          ]
+        }
+      }
+summary: 'Подход к проектированию систем через асинхронный обмен событиями вместо синхронных запросов. Сервисы публикуют свершившиеся факты, а подписчики изолированно обрабатывают их. Устраняет хрупкие point-to-point зависимости, обеспечивая слабую связанность и высокую отказоустойчивость компонентов.'
 ---
 
 ## The Algorithm
 
-1. **Найдите sync coupling hotspots**: Цепочки вызовов, где падение одного сервиса ломает другой.
-2. **Выделите domain events**: Facts в past tense: «OrderPlaced», «PaymentCaptured».
-3. **Спроектируйте contracts**: Schema versioning, compatibility rules.
-4. **Определите delivery semantics**: At-least-once + idempotent handlers; DLQ для poison messages.
-5. **Пилот на одном flow**: Один event, один producer, 1–2 consumers — validate ops.
+1. **Найдите точки жесткой синхронной связи**: Выявите цепочки вызовов, где сбой в одном сервисе каскадно ломает остальные.
+2. **Выделите доменные события**: Сформулируйте свершившиеся факты в прошедшем времени, например: OrderPlaced (Заказ Оформлен), PaymentCaptured (Оплата Поступила).
+3. **Спроектируйте контракты**: Зафиксируйте схемы данных, правила версионирования и обеспечения обратной совместимости.
+4. **Настройте семантику доставки**: Заложите гарантированную доставку как минимум один раз (at-least-once), обеспечьте идемпотентность обработчиков и настройте очередь невалидных сообщений (DLQ).
+5. **Запустите пилотный поток**: Начните с одного события, одного издателя и 1–2 подписчиков, чтобы протестировать и валидировать работу инфраструктуры в продакшене.
 
 ## Anti-patterns
 
-- **Events как commands**: «CreateOrder» — command; «OrderCreated» — event. Не путать.
-- **Distributed monolith через events**: Тесно связанные handlers с shared DB — не decoupling.
-- **EDA без observability**: Correlation ID, trace через bus — обязательны для debugging.
+- **События в роли команд**: Именование и суть в стиле CreateOrder — это команда (приказ выполнить действие). Событие — это всегда свершившийся факт в прошедшем времени: OrderCreated. Не путайте интенты и факты.
+- **Распределенный монолит через события**: Если ваши обработчики жестко завязаны на внутреннюю логику друг друга или используют общую базу данных (Shared DB) — это не слабая связанность, а усложненный монолит.
+- **Событийная архитектура без сквозного мониторинга**: Запуск EDA без трассировки — это слепая зона. Использование сквозных идентификаторов (Correlation ID) и трассировки (Trace ID) через брокер сообщений обязательны для отладки и мониторинга.

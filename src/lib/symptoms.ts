@@ -207,6 +207,7 @@ export const symptoms: Symptom[] = [
       "ddd-bounded-contexts",
       "event-storming",
       "context-mapping",
+      "system-quality-attributes",
       "team-topologies",
       "reference-architecture",
     ],
@@ -236,6 +237,7 @@ export const symptoms: Symptom[] = [
     outcome:
       "становится понятно — что ограничивает развитие системы; какие части архитектуры стали bottleneck; где система не соответствует структуре команды; как система должна эволюционировать дальше",
     frameworks: [
+      "system-quality-attributes",
       "reference-architecture",
       "zachman-framework",
       "conway-mapping",
@@ -267,6 +269,7 @@ export const symptoms: Symptom[] = [
     outcome:
       "становится понятно — почему принимались решения; какие ограничения влияли на архитектуру; какие trade-offs были выбраны; какие assumptions лежат в основе системы",
     frameworks: [
+      "system-quality-attributes",
       "adr",
       "reference-architecture",
       "architecture-decision-mapping",

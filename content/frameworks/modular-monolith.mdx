@@ -6,26 +6,102 @@ domain_layer: Structural
 problems:
   - complex-005
 intent: |
-  Modular Monolith — монолит с жёсткими модульными границами: каждый module — потенциальный будущий сервис, изменения локализованы внутри module API. Альтернатива premature microservices для сложного, но ещё не split-ready кода.
+  Обеспечить строгую изоляцию бизнес-контекстов в единой кодовой базе. Это позволяет контролировать сложность системы на этапе роста и готовит её к безболезненному разделению на микросервисы в будущем, избегая преждевременного усложнения инфраструктуры.
 prompt: |
-  Спроектируй Modular Monolith для [название системы]. Выдели modules по bounded contexts. Для каждого: public API (facade), internal implementation, allowed dependencies. Запрети cross-module imports except through published interfaces. Отметь «god modules» — кандидаты на split или refactor.
+  Спроектируй архитектуру «Модульный монолит» (Modular Monolithic) для системы: [Название или краткое описание системы].
+
+  1. Выдели модули на основе ограниченных контекстов (Bounded Contexts) предметной области.
+  2. Для каждого модуля определи:
+    - Назначение (кратко).
+    - Публичный интерфейс (API/Фасад) — доступные извне методы и события.
+    - Внутреннюю реализацию — ключевые сущности и логику, скрытые от других модулей.
+    - Разрешенные зависимости — от каких модулей или внешних систем он зависит.
+
+  Правила валидации:
+  - Строго запрети сквозные импорты (cross-module imports) в обход публичных интерфейсов.
+  - Выяви потенциальные «модули-божества» (God Modules), которые перегружены логикой, и предложи для них стратегию разделения или рефакторинга.
+
+  Выведи результат в виде структурированного технического описания.
 theory_anchor: |
-  Modular Monolith материализует теорию локализованной сложности. Module boundary — compile-time enforcement of domain boundary. Complexity живёт внутри module; снаружи — только контракт.
-artifact_desc: |
-  Module map diagram, dependency rules (ArchUnit/dependency-cruiser config), список module public APIs, violations report текущего codebase.
-summary: 'Монолит с чёткими модульными границами: каждый module — потенциальный будущий сервис, изменения локализованы внутри module API. Альтернатива premature microservices.'
+  Прагматичный инструмент контроля сложности. Архитектурные границы переносятся на уровень компиляции: вся сложность инкапсулируется внутри модуля, а наружу выставляется только чистый контракт.
+artifacts:
+  - label: Архитектурная карта
+    filename: arc-map.md
+    open_url: https://mermaid.live/edit
+    open_label: Открыть в Mermaid Live
+    example: |
+      graph TD
+        subgraph Монолитное приложение
+            subgraph Модуль Заказов [Order Module]
+                OrderInternal[Внутренняя логика] --> OrderAPI[Public API / Facade]
+            end
+
+            subgraph Модуль Оплаты [Payment Module]
+                PaymentInternal[Внутренняя логика] --> PaymentAPI[Public API / Facade]
+            end
+        end
+
+        %% Правильные связи — только через API
+        OrderInternal -->|Вызов| PaymentAPI
+
+        %% Запрещенные связи (для отчета о нарушениях)
+        OrderInternal -.->|КРИТИЧЕСКАЯ ОШИБКА: прямой импорт| PaymentInternal
+
+        style OrderAPI fill:#2ecc71,stroke:#27ae60,stroke-width:2px;
+        style PaymentAPI fill:#2ecc71,stroke:#27ae60,stroke-width:2px;
+        style OrderInternal fill:#e74c3c,stroke:#c0392b;
+        style PaymentInternal fill:#e74c3c,stroke:#c0392b;
+  - label: Шаблон конфигурации правил зависимостей (ArchUnit для Java/Kotlin)
+    filename: ArchUnit.md
+    example: |
+      package com.yourproject.architecture;
+
+      import com.tngtech.archunit.junit.AnalyzeClasses;
+      import com.tngtech.archunit.junit.ArchTest;
+      import com.tngtech.archunit.lang.ArchRule;
+      import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
+
+      @AnalyzeClasses(packages = "com.yourproject")
+      public class ModularMonolithTest {
+
+          @ArchTest
+          public static final ArchRule strict_module_boundaries = layeredArchitecture()
+              .consideringAllDependencies()
+              // Описываем слои/модули и их публичные интерфейсы
+              .layer("Order_Public").definedBy("com.yourproject.order.api..")
+              .layer("Order_Internal").definedBy("com.yourproject.order.internal..")
+              .layer("Payment_Public").definedBy("com.yourproject.payment.api..")
+              .layer("Payment_Internal").definedBy("com.yourproject.payment.internal..")
+
+              // Задаем правила изоляции внутренних реализаций
+              .whereLayer("Order_Internal").mayNotBeAccessedByAnyLayer()
+              .whereLayer("Payment_Internal").mayNotBeAccessedByAnyLayer()
+
+              // Разрешаем общение только через публичные контракты
+              .whereLayer("Order_Public").mayOnlyBeAccessedByLayers("Payment_Internal")
+              .whereLayer("Payment_Public").mayOnlyBeAccessedByLayers("Order_Internal");
+      }
+  - label: Таблица модулей
+    filename: registry.md
+    format: markdown
+    example: |
+      | Имя модуля | Ограниченный контекст (DDD) | Точка входа (Facade / API) | Разрешенные зависимости | Текущий статус (Техдолг) |
+      | --- | --- | --- | --- | --- |
+      | `order-module` | Управление заказами (`Order`) | `OrderFacade.create()`, `OrderEvent.Created` | `payment-module` (API) | Границы чистые, готов к выносу |
+      | `payment-module` | Биллинг и оплата (`Billing`) | `PaymentFacade.process()` | Нет | Найдено 3 циклических импорта |
+summary: 'Архитектурный подход, совмещающий простоту единой кодовой базы со строгой изоляцией компонентов. Каждый модуль имеет четкие границы и общается с другими только через явные интерфейсы. Это избавляет от хаоса в коде и позволяет при необходимости легко вынести любой модуль в отдельный микросервис.'
 ---
 
 ## The Algorithm
 
-1. **Identify modules from DDD**: Bounded context ≈ module candidate.
-2. **Define public API per module**: Facade interface — единственная точка входа для других modules.
-3. **Enforce dependency rules**: Module A → Module B only via B's public API; no internal imports.
-4. **Automate in CI**: ArchUnit, custom lint — fail on boundary violation.
-5. **Plan extraction path**: Module with stable API + low coupling — first microservice candidate.
+1. **Выделить модули через DDD**: Один ограниченный контекст (Bounded Context) ≈ кандидат на модуль.
+2. **Определить публичный интерфейс**: Создать фасад для каждого модуля — это единственная точка входа для остальных компонентов системы.
+3. **Зафиксировать правила зависимостей**: Модуль А может вызывать Модуль Б только через его публичный интерфейс; любые внутренние импорты строго запрещены.
+4. **Автоматизировать проверку в CI**: Настроить тесты архитектуры (например, ArchUnit или кастомные линтеры), чтобы сборка падала при любом нарушении границ.
+5. **Наметить план разделения**: Модуль со стабильным интерфейсом и слабой связностью — первый кандидат на вынос в отдельный микросервис.
 
 ## Anti-patterns
 
-- **Modules = folders without rules**: Без enforcement boundaries — package structure theatre.
-- **Shared kernel everywhere**: Shared DB/models между modules — distributed monolith inside one deploy.
-- **Modular monolith forever**: Goal — optionality to extract, not eternal monolith dogma.
+- **Модули «на честном слове»**: Создание папок без автоматической проверки границ в CI. Без жестких правил структура каталогов превращается в театр архитектуры.
+- **Раздутое «общее ядро» (Shared Kernel)**: Использование общей базы данных или сквозных моделей данных между модулями. Это создает распределенный монолит внутри одной сборки.
+- **Монолит как вечная догма**: Стремление сохранить монолитную архитектуру любой ценой. Цель подхода — дать свободу и готовность к безболезненному выделению сервисов, а не законсервировать систему навсегда.
