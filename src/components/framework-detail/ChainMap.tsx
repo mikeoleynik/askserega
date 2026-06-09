@@ -1,6 +1,6 @@
 import Link from "next/link"
 import type { FrameworkMeta } from "@/lib/frameworks-index"
-import { getDifficultyShort } from "@/lib/parse-framework-sections"
+import { getDifficultyShort } from "@/lib/taxonomy"
 
 interface ChainMapProps {
   current: FrameworkMeta

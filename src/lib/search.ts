@@ -1,20 +1,32 @@
 import FlexSearch from "flexsearch"
 import type { FrameworkMeta } from "./frameworks-index"
+import { getSymptomsForFramework } from "./symptoms"
 
-let index: FlexSearch.Document<FrameworkMeta, true> | null = null
+// Членство в болях больше не хранится в MDX (problems[]) — оно выводится из symptoms.ts.
+// Для поиска обогащаем документ текстом болей (symptomText), чтобы можно было искать
+// по формулировке боли, а не по техническим id.
+type IndexedFramework = FrameworkMeta & { symptomText: string }
+
+let index: FlexSearch.Document<IndexedFramework, true> | null = null
 let indexedSlugs = new Set<string>()
 
-export function getSearchIndex(): FlexSearch.Document<FrameworkMeta, true> {
+function symptomTextFor(slug: string): string {
+  return getSymptomsForFramework(slug)
+    .map((s) => `${s.title} ${s.goal}`)
+    .join(" ")
+}
+
+export function getSearchIndex(): FlexSearch.Document<IndexedFramework, true> {
   if (index) return index
 
-  index = new FlexSearch.Document<FrameworkMeta, true>({
+  index = new FlexSearch.Document<IndexedFramework, true>({
     document: {
       id: "slug",
       index: [
         { field: "title", tokenize: "forward" },
         { field: "subtitle", tokenize: "forward" },
         { field: "summary", tokenize: "forward" },
-        { field: "problems", tokenize: "forward" },
+        { field: "symptomText", tokenize: "forward" },
       ],
       store: true,
     },
@@ -29,7 +41,7 @@ export function buildSearchIndex(frameworks: FrameworkMeta[]) {
   const idx = getSearchIndex()
   for (const fw of frameworks) {
     if (indexedSlugs.has(fw.slug)) continue
-    idx.add(fw)
+    idx.add({ ...fw, symptomText: symptomTextFor(fw.slug) })
     indexedSlugs.add(fw.slug)
   }
 }
@@ -41,7 +53,7 @@ function fallbackSearch(query: string, frameworks: FrameworkMeta[]): FrameworkMe
       fw.title.toLowerCase().includes(q) ||
       fw.subtitle.toLowerCase().includes(q) ||
       (fw.summary?.toLowerCase().includes(q) ?? false) ||
-      fw.problems.some((p) => p.toLowerCase().includes(q)),
+      symptomTextFor(fw.slug).toLowerCase().includes(q),
   )
 }
 

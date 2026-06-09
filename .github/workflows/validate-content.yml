@@ -3,10 +3,12 @@ on:
   pull_request:
     paths:
       - "content/frameworks/**/*.mdx"
+      - "src/lib/symptoms.ts"
   push:
     branches: [main]
     paths:
       - "content/frameworks/**/*.mdx"
+      - "src/lib/symptoms.ts"
 
 jobs:
   validate:
@@ -21,5 +23,5 @@ jobs:
       - run: npm run build
       - name: Validate frontmatter
         run: node scripts/validate-frontmatter.mjs
-      - name: Check link consistency
-        run: node scripts/check-links.mjs
+      - name: Check symptoms ↔ MDX sync
+        run: node scripts/check-symptoms-sync.mjs

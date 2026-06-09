@@ -98,36 +98,3 @@ export function parseFrameworkSections(raw: string): ParsedFrameworkSections {
     antiPatterns: parseAntiPatterns(antiPatternsText),
   }
 }
-
-export function getDifficultyLabel(difficulty: "low" | "medium" | "high"): string {
-  switch (difficulty) {
-    case "low":
-      return "низкая"
-    case "medium":
-      return "средняя"
-    case "high":
-      return "высокая"
-  }
-}
-
-export function getDifficultyShort(difficulty: "low" | "medium" | "high"): string {
-  switch (difficulty) {
-    case "low":
-      return "Низк."
-    case "medium":
-      return "Сред."
-    case "high":
-      return "Выс."
-  }
-}
-
-export function getEstimatedTime(difficulty: "low" | "medium" | "high"): string {
-  switch (difficulty) {
-    case "low":
-      return "1–2 дня на внедрение"
-    case "medium":
-      return "3–5 дней на внедрение"
-    case "high":
-      return "1–2 недели на внедрение"
-  }
-}

@@ -5,11 +5,13 @@ import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import type { FrameworkMeta } from "@/lib/frameworks-index"
 import type { AlgorithmStep, AntiPattern } from "@/lib/parse-framework-sections"
+import { getDifficultyLabel, getEstimatedTime } from "@/lib/taxonomy"
 import {
-  getDifficultyLabel,
-  getEstimatedTime,
-} from "@/lib/parse-framework-sections"
-import { getChainNeighbors, getFrameworkStepInSymptom, resolveActiveSymptom, symptoms } from "@/lib/symptoms"
+  getChainNeighbors,
+  getFrameworkStepInSymptom,
+  getSymptomsForFramework,
+  resolveActiveSymptom,
+} from "@/lib/symptoms"
 import ChainMap from "./ChainMap"
 import CopyButton from "./CopyButton"
 
@@ -20,8 +22,6 @@ interface FrameworkDetailViewProps {
   antiPatterns: AntiPattern[]
   artifactGallery?: ReactNode
 }
-
-const symptomMap = new Map(symptoms.map((s) => [s.id, s]))
 
 const TOC_ITEMS = [
   { id: "pain", label: "Боль и интент" },
@@ -78,7 +78,8 @@ export default function FrameworkDetailView({
   const symptomFromUrl = searchParams.get("symptom")
 
   const frameworkMap = new Map(allFrameworks.map((f) => [f.slug, f]))
-  const activeSymptom = resolveActiveSymptom(fw.slug, symptomFromUrl, fw.problems)
+  const frameworkSymptoms = getSymptomsForFramework(fw.slug)
+  const activeSymptom = resolveActiveSymptom(fw.slug, symptomFromUrl)
   const primarySymptom = activeSymptom
   const stepInfo = activeSymptom
     ? getFrameworkStepInSymptom(activeSymptom.id, fw.slug)
@@ -309,28 +310,27 @@ export default function FrameworkDetailView({
               </div>
             )}
 
-            {fw.problems.length > 0 && (
+            {frameworkSymptoms.length > 0 && (
               <div className="mb-5">
-                {fw.problems.length > 1 && (
+                {frameworkSymptoms.length > 1 && (
                   <p className="mono text-[10px] text-subtle uppercase tracking-wider mb-2">
                     Путь обучения
                   </p>
                 )}
                 <div className="flex flex-wrap gap-1.5">
-                  {fw.problems.map((p) => {
-                    const s = symptomMap.get(p)
-                    const isActive = activeSymptom?.id === p
+                  {frameworkSymptoms.map((s) => {
+                    const isActive = activeSymptom?.id === s.id
                     return (
                       <Link
-                        key={p}
-                        href={`/frameworks/${fw.slug}?symptom=${p}`}
+                        key={s.id}
+                        href={`/frameworks/${fw.slug}?symptom=${s.id}`}
                         className={`mono text-[10px] px-2 py-1 rounded-full border transition-colors ${
                           isActive
                             ? "bg-text text-white border-text"
                             : "bg-surface border-surface-alt text-muted hover:border-[#d1d5db]"
                         }`}
                       >
-                        {s?.title ?? p}
+                        {s.title}
                       </Link>
                     )
                   })}

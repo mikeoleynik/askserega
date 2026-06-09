@@ -1,6 +1,7 @@
 import fs from "fs"
 import path from "path"
 import matter from "gray-matter"
+import type { Difficulty, DomainLayer } from "./taxonomy"
 
 export interface FrameworkLink {
   label: string
@@ -21,9 +22,8 @@ export interface FrameworkMeta {
   title: string
   subtitle: string
   summary?: string
-  difficulty: "low" | "medium" | "high"
-  domain_layer: string
-  problems: string[]
+  difficulty: Difficulty
+  domain_layer: DomainLayer
   links: FrameworkLink[]
   intent?: string
   prompt?: string
@@ -92,7 +92,6 @@ export function getAllFrameworks(): FrameworkMeta[] {
       summary: data.summary,
       difficulty: data.difficulty || "medium",
       domain_layer: data.domain_layer || "",
-      problems: data.problems || [],
       links: parseLinks(data),
       intent: data.intent,
       prompt: data.prompt,

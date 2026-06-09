@@ -24,22 +24,39 @@ export function getCategoryColor(categoryId: string): string {
   return symptomCategories.find((c) => c.id === categoryId)?.color ?? "#64748b"
 }
 
-export function resolveActiveSymptom(
-  frameworkSlug: string,
-  preferredSymptomId?: string | null,
-  frameworkProblems?: string[]
-): Symptom | undefined {
-  if (preferredSymptomId) {
-    const preferred = symptoms.find((s) => s.id === preferredSymptomId)
-    if (preferred?.frameworks.includes(frameworkSlug)) return preferred
-  }
-  if (frameworkProblems?.length) {
-    for (const problemId of frameworkProblems) {
-      const match = symptoms.find((s) => s.id === problemId)
-      if (match?.frameworks.includes(frameworkSlug)) return match
+// Обратный индекс «фреймворк → боли». Это единственный источник членства:
+// поле problems[] в MDX больше не нужно — оно выводится отсюда.
+let frameworkToSymptoms: Map<string, Symptom[]> | null = null
+
+function getFrameworkSymptomIndex(): Map<string, Symptom[]> {
+  if (frameworkToSymptoms) return frameworkToSymptoms
+
+  const index = new Map<string, Symptom[]>()
+  for (const symptom of symptoms) {
+    for (const slug of symptom.frameworks) {
+      const list = index.get(slug)
+      if (list) list.push(symptom)
+      else index.set(slug, [symptom])
     }
   }
-  return symptoms.find((s) => s.frameworks.includes(frameworkSlug))
+  frameworkToSymptoms = index
+  return index
+}
+
+export function getSymptomsForFramework(frameworkSlug: string): Symptom[] {
+  return getFrameworkSymptomIndex().get(frameworkSlug) ?? []
+}
+
+export function resolveActiveSymptom(
+  frameworkSlug: string,
+  preferredSymptomId?: string | null
+): Symptom | undefined {
+  const frameworkSymptoms = getSymptomsForFramework(frameworkSlug)
+  if (preferredSymptomId) {
+    const preferred = frameworkSymptoms.find((s) => s.id === preferredSymptomId)
+    if (preferred) return preferred
+  }
+  return frameworkSymptoms[0]
 }
 
 export function getFrameworkStepInSymptom(

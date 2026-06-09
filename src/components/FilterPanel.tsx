@@ -2,6 +2,7 @@
 
 import { Tag } from "./ui/tag"
 import { symptomCategories, getSymptomsByCategory } from "@/lib/symptoms"
+import { DOMAIN_LAYERS } from "@/lib/taxonomy"
 
 export interface FilterState {
   difficulty: string | null
@@ -15,15 +16,6 @@ interface FilterPanelProps {
   state: FilterState
   onStateChange: (state: FilterState) => void
 }
-
-const domainLayers = [
-  { value: "Purpose", label: "Purpose" },
-  { value: "Domain", label: "Domain" },
-  { value: "Structural", label: "Structural" },
-  { value: "Runtime", label: "Runtime" },
-  { value: "Operational", label: "Operational" },
-  { value: "Evolution", label: "Evolution" },
-]
 
 export default function FilterPanel({ state, onStateChange }: FilterPanelProps) {
   const setDifficulty = (d: string | null) => onStateChange({ ...state, difficulty: d })
@@ -76,15 +68,15 @@ export default function FilterPanel({ state, onStateChange }: FilterPanelProps) 
             >
               Все домены
             </button>
-            {domainLayers.map((d) => (
+            {DOMAIN_LAYERS.map((d) => (
               <button
-                key={d.value}
+                key={d}
                 className={`sidebar-btn w-full text-left text-[13px] text-muted hover:text-text px-2 py-1 rounded-md hover:bg-surface-alt transition-colors ${
-                  state.domain_layer === d.value ? "active" : ""
+                  state.domain_layer === d ? "active" : ""
                 }`}
-                onClick={() => setDomain(d.value)}
+                onClick={() => setDomain(d)}
               >
-                {d.label}
+                {d}
               </button>
             ))}
           </div>

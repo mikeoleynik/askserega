@@ -1,0 +1,12 @@
+{
+  "domainLayers": [
+    "Purpose",
+    "Domain",
+    "Structural",
+    "Behavioral",
+    "Runtime",
+    "Operational",
+    "Evolution"
+  ],
+  "difficulties": ["low", "medium", "high"]
+}

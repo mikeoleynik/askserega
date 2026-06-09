@@ -2,7 +2,8 @@ import Link from "next/link"
 import { Badge } from "./ui/badge"
 import { Tag } from "./ui/tag"
 import type { FrameworkMeta } from "@/lib/frameworks-index"
-import { getFrameworkStepInSymptom } from "@/lib/symptoms"
+import { getFrameworkStepInSymptom, getSymptomsForFramework } from "@/lib/symptoms"
+import { getDifficultyShort } from "@/lib/taxonomy"
 
 interface FrameworkCardProps {
   framework: FrameworkMeta
@@ -16,10 +17,11 @@ export default function FrameworkCard({ framework, symptomId }: FrameworkCardPro
 
   const step = symptomId ? getFrameworkStepInSymptom(symptomId, framework.slug) : null
 
+  const symptomCount = getSymptomsForFramework(framework.slug).length
   const footerLabel = step
     ? `Шаг ${step.step} из ${step.total}`
-    : framework.problems.length > 0
-      ? `${framework.problems.length} ${framework.problems.length === 1 ? "боль" : "боли"}`
+    : symptomCount > 0
+      ? `${symptomCount} ${symptomCount === 1 ? "боль" : "боли"}`
       : "Справочный"
 
   return (
@@ -35,11 +37,7 @@ export default function FrameworkCard({ framework, symptomId }: FrameworkCardPro
             </p>
           </div>
           <Badge variant={framework.difficulty}>
-            {framework.difficulty === "low"
-              ? "Низк."
-              : framework.difficulty === "medium"
-              ? "Сред."
-              : "Выс."}
+            {getDifficultyShort(framework.difficulty)}
           </Badge>
         </div>
 

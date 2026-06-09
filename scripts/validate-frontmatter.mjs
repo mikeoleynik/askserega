@@ -2,8 +2,11 @@ import { readFileSync, readdirSync, existsSync } from "fs"
 import { join } from "path"
 
 const FRAMEWORKS_DIR = join(process.cwd(), "content", "frameworks")
-const VALID_DIFFICULTIES = ["low", "medium", "high"]
-const VALID_DOMAIN_LAYERS = ["Purpose", "Domain", "Structural", "Runtime", "Operational", "Evolution"]
+
+// Единый источник таксономии — src/lib/taxonomy.json (его же импортирует приложение).
+const taxonomy = JSON.parse(readFileSync(join(process.cwd(), "src/lib/taxonomy.json"), "utf-8"))
+const VALID_DIFFICULTIES = taxonomy.difficulties
+const VALID_DOMAIN_LAYERS = taxonomy.domainLayers
 
 function validate() {
   if (!existsSync(FRAMEWORKS_DIR)) {

@@ -27,7 +27,7 @@
 | Участие фреймворка в боли | MDX `problems[]` | фильтрация, переключатель путей |
 | Контент фреймворка | MDX body + intent/prompt/… | карточка |
 
-Подробная спека: `openspec/changes/mdx-theory-builder/specs/framework-chains/spec.md`
+Подробная спека: `openspec/specs/framework-chains/spec.md`
 
 ### Пример: добавить C4 в новую боль
 
@@ -68,8 +68,13 @@ npm run dev
 
 ```bash
 npm run build
+node scripts/validate-frontmatter.mjs
+node scripts/check-symptoms-sync.mjs
 ```
 
 CI проверяет:
 - Валидность frontmatter
-- Согласованность slug между `symptoms.ts` и MDX
+- Двустороннюю согласованность `symptoms.ts` ↔ MDX `problems[]`
+- Наличие `.mdx` для каждого slug в `symptoms[].frameworks[]`
+
+Файлы `content/frameworks/*.md` — черновики, не входят в каталог и CI.

@@ -18,11 +18,12 @@ import "@xyflow/react/dist/style.css"
 import Link from "next/link"
 import type { FrameworkMeta } from "@/lib/frameworks-index"
 import { getAllSymptomChainEdges } from "@/lib/symptoms"
+import { getDifficultyShort, type Difficulty } from "@/lib/taxonomy"
 
 interface FrameworkNodeData {
   title: string
   slug: string
-  difficulty: "low" | "medium" | "high"
+  difficulty: Difficulty
 }
 
 function FrameworkNode({ data }: NodeProps) {
@@ -35,7 +36,7 @@ function FrameworkNode({ data }: NodeProps) {
       <Handle type="target" position={Position.Left} style={{ background: "#94a3b8" }} />
       <div className="text-[12px] font-semibold text-text leading-tight">{d.title}</div>
       <div className="mono text-[9px] text-subtle uppercase tracking-wider mt-0.5">
-        {d.difficulty === "low" ? "Низк." : d.difficulty === "medium" ? "Сред." : "Выс."}
+        {getDifficultyShort(d.difficulty)}
       </div>
       <Handle
         type="source"
