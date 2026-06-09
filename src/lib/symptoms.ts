@@ -112,7 +112,13 @@ export const symptoms: Symptom[] = [
     goal: "Сформировать общее инженерное понимание системы",
     outcome:
       "команда начинает одинаково — описывать систему; понимать процессы; использовать термины; видеть границы ответственности",
-    frameworks: ["event-storming", "ubiquitous-language", "bounded-context-mapping", "reference-architecture"],
+    frameworks: [
+      "event-storming",
+      "ubiquitous-language",
+      "bounded-context-mapping",
+      "system-theory-anchor",
+      "reference-architecture",
+    ],
   },
   {
     id: "undrsys-003",
@@ -121,7 +127,7 @@ export const symptoms: Symptom[] = [
     goal: "Построить целостную карту системы",
     outcome:
       "появляется целостная инженерная карта системы — структура; потоки; зависимости; уровни абстракции",
-    frameworks: ["zachman-framework", "c4-model", "runtime-flow-mapping", "dependency-mapping"],
+    frameworks: ["zachman-framework", "c4-model", "uml-basics", "runtime-flow-mapping", "dependency-mapping"],
   },
   {
     id: "undrsys-004",
@@ -130,7 +136,13 @@ export const symptoms: Symptom[] = [
     goal: "Понять lifecycle данных и событий",
     outcome:
       "разработчик понимает — как движутся данные; где меняется состояние; какие сервисы участвуют; где возникают side effects",
-    frameworks: ["event-storming", "runtime-flow-mapping", "sequence-diagrams", "data-flow-mapping"],
+    frameworks: [
+      "event-storming",
+      "runtime-flow-mapping",
+      "uml-basics",
+      "sequence-diagrams",
+      "data-flow-mapping",
+    ],
   },
   {
     id: "undrsys-005",
@@ -148,7 +160,13 @@ export const symptoms: Symptom[] = [
     goal: "Сделать инженерное знание воспроизводимым",
     outcome:
       "понимание системы перестаёт жить только в головах отдельных людей",
-    frameworks: ["adr", "reference-architecture", "system-context-mapping", "theory-graph"],
+    frameworks: [
+      "adr",
+      "system-theory-anchor",
+      "reference-architecture",
+      "system-context-mapping",
+      "theory-graph",
+    ],
   },
   // Границы и зависимости
   {
@@ -238,6 +256,7 @@ export const symptoms: Symptom[] = [
       "становится понятно — что ограничивает развитие системы; какие части архитектуры стали bottleneck; где система не соответствует структуре команды; как система должна эволюционировать дальше",
     frameworks: [
       "system-quality-attributes",
+      "system-theory-anchor",
       "reference-architecture",
       "zachman-framework",
       "conway-mapping",
@@ -256,6 +275,7 @@ export const symptoms: Symptom[] = [
     frameworks: [
       "system-context-mapping",
       "c4-model",
+      "system-theory-anchor",
       "reference-architecture",
       "runtime-flow-mapping",
       "theory-graph",
@@ -287,6 +307,7 @@ export const symptoms: Symptom[] = [
     frameworks: [
       "theory-graph",
       "adr",
+      "system-theory-anchor",
       "reference-architecture",
       "system-context-mapping",
       "ubiquitous-language",
@@ -332,6 +353,7 @@ export const symptoms: Symptom[] = [
     frameworks: [
       "adr",
       "rfc-process",
+      "system-theory-anchor",
       "reference-architecture",
       "theory-graph",
       "context-mapping",
@@ -349,6 +371,7 @@ export const symptoms: Symptom[] = [
       "dependency-mapping",
       "runtime-flow-mapping",
       "c4-model",
+      "system-theory-anchor",
       "contract-testing",
       "adr",
     ],
@@ -411,6 +434,7 @@ export const symptoms: Symptom[] = [
       "modular-monolith",
       "hexagonal-architecture",
       "c4-model",
+      "system-theory-anchor",
       "refactoring-patterns",
       "ddd-bounded-contexts",
     ],

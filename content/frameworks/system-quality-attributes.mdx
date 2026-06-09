@@ -1,0 +1,75 @@
+---
+title: System Quality Attributes
+subtitle: Каталог -ilities для приоритизации и trade-offs
+difficulty: low
+domain_layer: Purpose
+problems:
+  - bound-004
+  - bound-006
+  - know-002
+  - complex-005
+links:
+  - label: List of system quality attributes (Wikipedia)
+    url: https://en.wikipedia.org/wiki/List_of_system_quality_attributes
+intent: |
+  Сформировать общий словарь нефункциональных требований (quality attributes, architectural characteristics, «-ilities») и явно расставить приоритеты для системы. Без этого выбор архитектурного стиля и компромиссы между командами остаются неявными.
+prompt: |
+  Построй карту quality attributes для системы: [название / контекст].
+
+  1. Собери стейкхолдеров и их ожидания: бизнес, эксплуатация, разработка, безопасность.
+  2. Из каталога -ilities выбери 8–12 релевантных атрибутов (не «все подряд»). Для каждого — краткое определение в контексте продукта и измеримый сигнал (метрика, сценарий, SLO).
+  3. Ранжируй топ-5 по важности (MoSCoW или веса 1–5). Явно укажи конфликтующие пары (например, availability ↔ cost, modifiability ↔ performance).
+  4. Сопоставь приоритеты с известными наборами (FURPS, RASUI, RAMS, agility subset) — что у вас доминирует.
+  5. Зафиксируй «анти-цели»: какие -ilities сознательно жертвуем на текущем этапе и почему.
+
+  Результат: таблица приоритетов + 3–5 trade-off, готовых для ADR и выбора архитектурного стиля.
+theory_anchor: |
+  Архитектурные стили выбирают не «по моде», а по балансу характеристик системы. Каталог quality attributes делает этот баланс обсуждаемым: одни и те же слова (availability, modifiability, reliability) перестают означать разное у разных людей.
+
+  Синхронная связность компонентов «склеивает» их -ilities — поэтому приоритеты атрибутов нужно задавать до детального проектирования интеграций.
+artifacts:
+  - label: Приоритеты и trade-offs
+    filename: quality-priorities.md
+    format: markdown
+    example: |
+      | Приоритет | Quality attribute | Сигнал / метрика | Конфликтует с |
+      | --- | --- | --- | --- |
+      | P1 | availability | 99.9% uptime, RTO < 15 min | cost, time-to-market |
+      | P1 | modifiability | lead time фичи < 2 нед | performance (лишние слои) |
+      | P2 | reliability | error budget < 0.1%/мес | deployability (частые релизы) |
+      | P2 | security | zero critical CVE в prod | usability (лишние шаги) |
+      | P3 | scalability | 3× пик без редизайна | simplicity |
+  - label: Справочник -ilities (сжатый)
+    filename: ilities-catalog.md
+    format: markdown
+    example: |
+      **Операционные:** availability, reliability, fault-tolerance, recoverability, resilience, scalability, elasticity.
+
+      **Развитие:** modifiability, maintainability, extensibility, evolvability, testability, deployability.
+
+      **Пользовательские:** usability, learnability, accessibility, performance (responsiveness, timeliness).
+
+      **Интеграция:** interoperability, portability, compatibility.
+
+      **Доверие:** security (confidentiality, integrity, availability), safety, auditability.
+
+      **Известные наборы:** FURPS; RASUI; RAMS; agility = debuggability + extensibility + portability + scalability + securability + testability + understandability.
+summary: >
+  Каталог нефункциональных характеристик системы (-ilities): availability, modifiability,
+  maintainability, reliability и десятки других. Задаёт общий язык приоритетов и trade-offs
+  перед выбором архитектурного стиля и фиксацией решений в ADR.
+---
+
+## The Algorithm
+
+1. **Соберите ожидания стейкхолдеров**: Бизнес, ops, dev, security — у каждого свой набор -ilities.
+2. **Отфильтруйте каталог**: 8–12 атрибутов, релевантных продукту; не копируйте весь Wikipedia-список.
+3. **Определите измеримость**: Для каждого атрибута — метрика, сценарий или SLO, иначе приоритеты не проверить.
+4. **Ранжируйте и найдите конфликты**: Топ-5 важных; пары взаимоисключающих целей (availability vs cost).
+5. **Свяжите с решениями**: Используйте приоритеты в ADR, выборе стиля (FASA) и fitness functions (Evolutionary Architecture).
+
+## Anti-patterns
+
+- **Все -ilities «высокий приоритет»**: Без жертв архитектура не выбирается — явно фиксируйте анти-цели.
+- **Разные термины в одной команде**: «Performance» vs «scalability» vs «responsiveness» — согласуйте глоссарий.
+- **Каталог без метрик**: Список слов не меняет поведение; нужен измеримый сигнал на атрибут.
