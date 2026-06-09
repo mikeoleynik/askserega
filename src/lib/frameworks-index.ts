@@ -17,6 +17,16 @@ export interface FrameworkArtifact {
   open_label?: string
 }
 
+export interface AlgorithmStep {
+  title: string
+  description: string
+}
+
+export interface AntiPattern {
+  title: string
+  description: string
+}
+
 export interface FrameworkMeta {
   slug: string
   title: string
@@ -30,6 +40,8 @@ export interface FrameworkMeta {
   theory_anchor?: string
   artifact_desc?: string
   artifacts: FrameworkArtifact[]
+  algorithm: AlgorithmStep[]
+  antipatterns: AntiPattern[]
 }
 
 function parseLinks(data: Record<string, unknown>): FrameworkLink[] {
@@ -64,14 +76,26 @@ function parseArtifactItem(raw: unknown): FrameworkArtifact | null {
 }
 
 function parseArtifacts(data: Record<string, unknown>): FrameworkArtifact[] {
-  if (Array.isArray(data.artifacts)) {
-    return data.artifacts
-      .map(parseArtifactItem)
-      .filter((item): item is FrameworkArtifact => item !== null)
-  }
+  if (!Array.isArray(data.artifacts)) return []
 
-  const single = parseArtifactItem(data.artifact)
-  return single ? [single] : []
+  return data.artifacts
+    .map(parseArtifactItem)
+    .filter((item): item is FrameworkArtifact => item !== null)
+}
+
+function parseTitledList(raw: unknown): { title: string; description: string }[] {
+  if (!Array.isArray(raw)) return []
+
+  return raw
+    .map((item) => {
+      if (typeof item !== "object" || item === null) return null
+      const obj = item as Record<string, unknown>
+      const title = typeof obj.title === "string" ? obj.title : undefined
+      if (!title) return null
+      const description = typeof obj.description === "string" ? obj.description : ""
+      return { title, description }
+    })
+    .filter((item): item is { title: string; description: string } => item !== null)
 }
 
 const FRAMEWORKS_DIR = path.join(process.cwd(), "content", "frameworks")
@@ -98,6 +122,8 @@ export function getAllFrameworks(): FrameworkMeta[] {
       theory_anchor: data.theory_anchor,
       artifact_desc: data.artifact_desc,
       artifacts: parseArtifacts(data),
+      algorithm: parseTitledList(data.algorithm),
+      antipatterns: parseTitledList(data.antipatterns),
     }
   })
 }
@@ -105,10 +131,4 @@ export function getAllFrameworks(): FrameworkMeta[] {
 export function getFrameworkBySlug(slug: string): FrameworkMeta | null {
   const frameworks = getAllFrameworks()
   return frameworks.find((f) => f.slug === slug) || null
-}
-
-export function getFrameworkContent(slug: string): string | null {
-  const filePath = path.join(FRAMEWORKS_DIR, `${slug}.mdx`)
-  if (!fs.existsSync(filePath)) return null
-  return fs.readFileSync(filePath, "utf-8")
 }

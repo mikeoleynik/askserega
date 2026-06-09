@@ -1,7 +1,6 @@
 import { Suspense } from "react"
 import { notFound } from "next/navigation"
-import { getAllFrameworks, getFrameworkBySlug, getFrameworkContent } from "@/lib/frameworks-index"
-import { parseFrameworkSections } from "@/lib/parse-framework-sections"
+import { getAllFrameworks, getFrameworkBySlug } from "@/lib/frameworks-index"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import FrameworkDetailView from "@/components/framework-detail/FrameworkDetailView"
@@ -36,11 +35,6 @@ export default async function FrameworkDetailPage({ params }: Props) {
   const fw = getFrameworkBySlug(params.slug)
   if (!fw) notFound()
 
-  const rawContent = getFrameworkContent(params.slug)
-  const { algorithm, antiPatterns } = rawContent
-    ? parseFrameworkSections(rawContent)
-    : { algorithm: [], antiPatterns: [] }
-
   const allFrameworks = getAllFrameworks()
 
   const artifactGallery =
@@ -67,8 +61,8 @@ export default async function FrameworkDetailPage({ params }: Props) {
         <FrameworkDetailView
           framework={fw}
           allFrameworks={allFrameworks}
-          algorithm={algorithm}
-          antiPatterns={antiPatterns}
+          algorithm={fw.algorithm}
+          antiPatterns={fw.antipatterns}
           artifactGallery={artifactGallery}
         />
       </Suspense>

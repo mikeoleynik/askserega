@@ -5,12 +5,11 @@ difficulty: low
 domain_layer: Structural
 links:
   - label: c4model.com
-    url: 'https://c4model.com'
+    url: https://c4model.com
   - label: Structurizr
-    url: 'https://structurizr.com'
-  - label: 'C4 + Context Maps'
-    url: 'https://www.architecture-weekly.com/p/on-mashing-up-modelling-techniques'
-
+    url: https://structurizr.com
+  - label: C4 + Context Maps
+    url: https://www.architecture-weekly.com/p/on-mashing-up-modelling-techniques
 intent: |
   C4 Model даёт общий визуальный язык для описания архитектуры системы на четырёх уровнях абстракции. Помогает команде сформировать единую картину системы — от контекста до кода.
 prompt: |
@@ -35,48 +34,53 @@ theory_anchor: |
   Применяя C4, вы материализуете уровни абстракции вашей теории в конкретные диаграммы — переводите ментальную модель системы из голов команды в передаваемый артефакт.
 
   Каждая C4-диаграмма — это «слой» теории, который можно передать, проверить и актуализировать независимо от сложности системы.
-artifact:
-  label: пример Structurizr DSL
-  filename: workspace.dsl
-  open_url: 'https://structurizr.com/dsl'
-  open_label: Открыть в Structurizr
-  example: |
-    workspace "My System" {
+summary: 'Единый язык описания архитектуры ПО: четыре уровня абстракции помогают команде разговаривать об одной и той же системе с нужной степенью детализации.'
+artifacts:
+  - label: пример Structurizr DSL
+    filename: workspace.dsl
+    open_url: https://structurizr.com/dsl
+    open_label: Открыть в Structurizr
+    example: |
+      workspace "My System" {
 
-      model {
-        user   = person      "Пользователь"
-        system = softwareSystem "Моя система" {
+        model {
+          user   = person      "Пользователь"
+          system = softwareSystem "Моя система" {
 
-          webApp = container "Web App"    { technology "React" }
-          api    = container "Backend API" { technology "Go / gRPC" }
-          db     = container "PostgreSQL"  { technology "SQL" }
+            webApp = container "Web App"    { technology "React" }
+            api    = container "Backend API" { technology "Go / gRPC" }
+            db     = container "PostgreSQL"  { technology "SQL" }
 
-          webApp -> api  "REST"
-          api    -> db   "pgx"
+            webApp -> api  "REST"
+            api    -> db   "pgx"
+          }
+
+          user -> webApp "HTTPS"
         }
 
-        user -> webApp "HTTPS"
+        views {
+          systemContext system   { include * ; autoLayout }
+          container     system   { include * ; autoLayout }
+        }
       }
-
-      views {
-        systemContext system   { include * ; autoLayout }
-        container     system   { include * ; autoLayout }
-      }
-    }
-summary: 'Единый язык описания архитектуры ПО: четыре уровня абстракции помогают команде разговаривать об одной и той же системе с нужной степенью детализации.'
+algorithm:
+  - title: Контекст (Level 1)
+    description: Нарисуйте систему как один блок. Определите пользователей и внешние системы, с которыми она взаимодействует.
+  - title: Контейнеры (Level 2)
+    description: Разбейте систему на запускаемые единицы (веб-приложения, API, базы данных). Покажите, как они общаются.
+  - title: Компоненты (Level 3)
+    description: Внутри ключевого контейнера покажите основные компоненты и их ответственность.
+  - title: Код (Level 4)
+    description: Для критических компонентов покажите ключевые классы/модули (опционально).
+  - title: Держите диаграммы живыми
+    description: Интегрируйте генерацию диаграмм в CI/CD (Structurizr DSL + Structurizr Lite) или обновляйте вручную при каждом значимом архитектурном решении.
+antipatterns:
+  - title: Рисовать все 4 уровня сразу для всей системы
+    description: Начните с контекста, углубляйтесь только в проблемные зоны.
+  - title: Детализировать Level 4 для каждого компонента
+    description: Level 4 опционален — только для критических частей системы.
+  - title: Делать диаграммы в одиночку
+    description: C4 — инструмент коллективного понимания. Диаграмма, нарисованная в одностороннем порядке и «спущенная» команде, не строит теорию — она создаёт ещё один артефакт, который никто не читает.
+  - title: Смешивать уровни абстракции
+    description: Таблица БД и микросервис — разные уровни C4. Смешение уровней уничтожает главную ценность модели — предсказуемую степень детализации.
 ---
-
-## The Algorithm
-
-1. **Контекст (Level 1)**: Нарисуйте систему как один блок. Определите пользователей и внешние системы, с которыми она взаимодействует.
-2. **Контейнеры (Level 2)**: Разбейте систему на запускаемые единицы (веб-приложения, API, базы данных). Покажите, как они общаются.
-3. **Компоненты (Level 3)**: Внутри ключевого контейнера покажите основные компоненты и их ответственность.
-4. **Код (Level 4)**: Для критических компонентов покажите ключевые классы/модули (опционально).
-5. **Держите диаграммы живыми**: Интегрируйте генерацию диаграмм в CI/CD (Structurizr DSL + Structurizr Lite) или обновляйте вручную при каждом значимом архитектурном решении.
-
-## Anti-patterns
-
-- **Рисовать все 4 уровня сразу для всей системы**: Начните с контекста, углубляйтесь только в проблемные зоны.
-- **Детализировать Level 4 для каждого компонента**: Level 4 опционален — только для критических частей системы.
-- **Делать диаграммы в одиночку**: C4 — инструмент коллективного понимания. Диаграмма, нарисованная в одностороннем порядке и «спущенная» команде, не строит теорию — она создаёт ещё один артефакт, который никто не читает.
-- **Смешивать уровни абстракции**: Таблица БД и микросервис — разные уровни C4. Смешение уровней уничтожает главную ценность модели — предсказуемую степень детализации.

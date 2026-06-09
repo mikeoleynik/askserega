@@ -1,30 +1,13 @@
 import { readFileSync, readdirSync, existsSync } from "fs"
 import { join } from "path"
 
-// Источник правды о связях «фреймворк ↔ боль» — только src/lib/symptoms.ts.
-// MDX больше не содержит problems[] (выводится из symptoms.ts), поэтому проверка односторонняя:
+// Источник правды о связях «фреймворк ↔ боль» — только content/symptoms.json.
+// MDX больше не содержит problems[] (выводится из symptoms), поэтому проверка односторонняя:
 //   1. каждый slug в symptoms[].frameworks[] имеет content/frameworks/<slug>.mdx
 //   2. предупреждение, если MDX не привязан ни к одной боли (справочный фреймворк)
 
 const FRAMEWORKS_DIR = join(process.cwd(), "content", "frameworks")
-const SYMPTOMS_FILE = join(process.cwd(), "src/lib/symptoms.ts")
-
-function parseSymptomsFromTs(source) {
-  const symptoms = []
-  const blocks = [
-    ...source.matchAll(
-      /{\s*\n\s*id:\s*"([^"]+)"[\s\S]*?frameworks:\s*(\[[\s\S]*?\])\s*,?\s*\n\s*}/g,
-    ),
-  ]
-
-  for (const match of blocks) {
-    const id = match[1]
-    const frameworks = [...match[2].matchAll(/"([^"]+)"/g)].map((m) => m[1])
-    symptoms.push({ id, frameworks })
-  }
-
-  return symptoms
-}
+const SYMPTOMS_FILE = join(process.cwd(), "content", "symptoms.json")
 
 function getMdxSlugs() {
   if (!existsSync(FRAMEWORKS_DIR)) return new Set()
@@ -38,11 +21,11 @@ function getMdxSlugs() {
 
 function validate() {
   if (!existsSync(SYMPTOMS_FILE)) {
-    console.error("ERROR: src/lib/symptoms.ts not found")
+    console.error("ERROR: content/symptoms.json not found")
     process.exit(1)
   }
 
-  const symptoms = parseSymptomsFromTs(readFileSync(SYMPTOMS_FILE, "utf-8"))
+  const { symptoms } = JSON.parse(readFileSync(SYMPTOMS_FILE, "utf-8"))
   const mdxSlugs = getMdxSlugs()
   const referenced = new Set()
   let errors = 0

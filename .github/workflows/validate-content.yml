@@ -3,12 +3,12 @@ on:
   pull_request:
     paths:
       - "content/frameworks/**/*.mdx"
-      - "src/lib/symptoms.ts"
+      - "content/symptoms.json"
   push:
     branches: [main]
     paths:
       - "content/frameworks/**/*.mdx"
-      - "src/lib/symptoms.ts"
+      - "content/symptoms.json"
 
 jobs:
   validate:

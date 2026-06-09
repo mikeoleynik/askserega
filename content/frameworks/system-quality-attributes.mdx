@@ -49,22 +49,24 @@ artifacts:
       **Доверие:** security (confidentiality, integrity, availability), safety, auditability.
 
       **Известные наборы:** FURPS; RASUI; RAMS; agility = debuggability + extensibility + portability + scalability + securability + testability + understandability.
-summary: >
-  Каталог нефункциональных характеристик системы (-ilities): availability, modifiability,
-  maintainability, reliability и десятки других. Задаёт общий язык приоритетов и trade-offs
-  перед выбором архитектурного стиля и фиксацией решений в ADR.
+summary: |
+  Каталог нефункциональных характеристик системы (-ilities): availability, modifiability, maintainability, reliability и десятки других. Задаёт общий язык приоритетов и trade-offs перед выбором архитектурного стиля и фиксацией решений в ADR.
+algorithm:
+  - title: Соберите ожидания стейкхолдеров
+    description: Бизнес, ops, dev, security — у каждого свой набор -ilities.
+  - title: Отфильтруйте каталог
+    description: 8–12 атрибутов, релевантных продукту; не копируйте весь Wikipedia-список.
+  - title: Определите измеримость
+    description: Для каждого атрибута — метрика, сценарий или SLO, иначе приоритеты не проверить.
+  - title: Ранжируйте и найдите конфликты
+    description: Топ-5 важных; пары взаимоисключающих целей (availability vs cost).
+  - title: Свяжите с решениями
+    description: Используйте приоритеты в ADR, выборе стиля (FASA) и fitness functions (Evolutionary Architecture).
+antipatterns:
+  - title: Все -ilities «высокий приоритет»
+    description: Без жертв архитектура не выбирается — явно фиксируйте анти-цели.
+  - title: Разные термины в одной команде
+    description: «Performance» vs «scalability» vs «responsiveness» — согласуйте глоссарий.
+  - title: Каталог без метрик
+    description: Список слов не меняет поведение; нужен измеримый сигнал на атрибут.
 ---
-
-## The Algorithm
-
-1. **Соберите ожидания стейкхолдеров**: Бизнес, ops, dev, security — у каждого свой набор -ilities.
-2. **Отфильтруйте каталог**: 8–12 атрибутов, релевантных продукту; не копируйте весь Wikipedia-список.
-3. **Определите измеримость**: Для каждого атрибута — метрика, сценарий или SLO, иначе приоритеты не проверить.
-4. **Ранжируйте и найдите конфликты**: Топ-5 важных; пары взаимоисключающих целей (availability vs cost).
-5. **Свяжите с решениями**: Используйте приоритеты в ADR, выборе стиля (FASA) и fitness functions (Evolutionary Architecture).
-
-## Anti-patterns
-
-- **Все -ilities «высокий приоритет»**: Без жертв архитектура не выбирается — явно фиксируйте анти-цели.
-- **Разные термины в одной команде**: «Performance» vs «scalability» vs «responsiveness» — согласуйте глоссарий.
-- **Каталог без метрик**: Список слов не меняет поведение; нужен измеримый сигнал на атрибут.

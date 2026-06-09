@@ -3,8 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import type { FrameworkMeta } from "@/lib/frameworks-index"
-import type { AlgorithmStep, AntiPattern } from "@/lib/parse-framework-sections"
+import type { FrameworkMeta, AlgorithmStep, AntiPattern } from "@/lib/frameworks-index"
 import { getDifficultyLabel, getEstimatedTime } from "@/lib/taxonomy"
 import {
   getChainNeighbors,
@@ -388,8 +387,8 @@ export default function FrameworkDetailView({
               <BlockLabel>Блок B — Механика · Алгоритм</BlockLabel>
 
               <div className="bg-surface rounded-[8px] border border-surface-alt divide-y divide-surface-alt">
-                {algorithm.map((step) => (
-                  <div key={step.number} className="step-item flex items-start gap-4 p-4">
+                {algorithm.map((step, i) => (
+                  <div key={i} className="step-item flex items-start gap-4 p-4">
                     <label className="flex items-center gap-3 cursor-pointer flex-1">
                       <input
                         type="checkbox"
@@ -397,7 +396,7 @@ export default function FrameworkDetailView({
                       />
                       <div>
                         <div className="mono text-[10px] text-subtle mb-0.5">
-                          ШАГ {String(step.number).padStart(2, "0")}
+                          ШАГ {String(i + 1).padStart(2, "0")}
                         </div>
                         <p className="step-label text-[14px] text-text font-medium leading-snug">
                           {step.title}
