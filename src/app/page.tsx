@@ -12,23 +12,15 @@ export default function HomePage() {
       <section className="blueprint-bg border-b border-surface-alt">
         <div className="max-w-[1200px] mx-auto px-8 pt-16 pb-14">
           <div className="max-w-[640px]">
-            <div className="mono text-[10px] text-subtle uppercase tracking-[0.12em] mb-5 flex items-center gap-2">
-              <span className="w-4 h-px bg-subtle/40 inline-block" />
-              Peter Naur, 1985 — программирование как построение теории
-            </div>
-
             <h1 className="text-[40px] font-semibold leading-[1.1] tracking-[-0.8px] text-text mb-5">
-              Программирование — это акт построения теории.
+              Теория проекта — за 15 минут
             </h1>
 
-            <p className="text-[16px] text-muted leading-relaxed mb-2">
-              Код читается легко. Система — нет.
+            <p className="text-[16px] text-muted leading-relaxed mb-6">
+              Почему сервисы разделены именно так? Где нельзя трогать? Как течёт информация?
+              Эти знания живут в голове одного человека — и исчезают вместе с ним.
             </p>
 
-            <p className="text-[16px] text-muted leading-relaxed mb-4">
-              Почему сервисы разделены именно так? Где нельзя трогать? Как текут данные? Эти знания живут в голове одного человека — и
-              исчезают вместе с ним.
-            </p>
             <p className="text-[16px] text-muted leading-relaxed mb-8">
               <span className="text-subtle mr-1">↓</span>
               Подборка{" "}
@@ -37,6 +29,14 @@ export default function HomePage() {
               </strong>
               , чтобы материализовать, поддерживать и передавать теорию вашего проекта.
             </p>
+
+            <div className="flex items-center gap-2 mono text-[12px] text-muted mb-8 flex-wrap">
+              <span>Выбери боль</span>
+              <span className="text-subtle">→</span>
+              <span>Получи модели и LLM-промт</span>
+              <span className="text-subtle">→</span>
+              <span>Зафикси артефакт</span>
+            </div>
 
             <div className="flex items-center gap-3">
               <Link

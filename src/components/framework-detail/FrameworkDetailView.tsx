@@ -23,7 +23,7 @@ interface FrameworkDetailViewProps {
 }
 
 const TOC_ITEMS = [
-  { id: "pain", label: "Боль и интент" },
+  { id: "pain", label: "Зачем это нужно" },
   { id: "llm", label: "LLM-промт" },
   { id: "algorithm", label: "Алгоритм" },
   { id: "anchor", label: "Что вы получите" },
@@ -280,7 +280,7 @@ export default function FrameworkDetailView({
         <main className="flex-1 min-w-0 space-y-10">
           {/* Block A: Context */}
           <section id="pain" className="scroll-mt-20">
-            <BlockLabel>Блок A — Контекст</BlockLabel>
+            <BlockLabel>Зачем это нужно</BlockLabel>
 
             {primarySymptom && (
               <div className="bg-[#fef2f2] border border-[#fecaca] rounded-[8px] p-5 mb-5">
@@ -384,7 +384,7 @@ export default function FrameworkDetailView({
           {/* Block B: Algorithm */}
           {algorithm.length > 0 && (
             <section id="algorithm" className="scroll-mt-20">
-              <BlockLabel>Блок B — Механика · Алгоритм</BlockLabel>
+              <BlockLabel>Алгоритм</BlockLabel>
 
               <div className="bg-surface rounded-[8px] border border-surface-alt divide-y divide-surface-alt">
                 {algorithm.map((step, i) => (
@@ -498,7 +498,7 @@ export default function FrameworkDetailView({
           {/* Block C: Connections */}
           {(requires.length > 0 || leadsTo.length > 0) && (
             <section id="map" className="scroll-mt-20">
-              <BlockLabel>Блок C — Карта связей</BlockLabel>
+              <BlockLabel>Карта связей</BlockLabel>
 
               <ChainMap
                 current={fw}

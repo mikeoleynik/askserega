@@ -40,10 +40,12 @@ coverage/
 # vercel / turbo (if used later)
 .vercel/
 .turbo/
+.cursor/
 
 Planning/
 site/
 content/drafts
+docs/
 
 openspec/
 AGENTS.md
