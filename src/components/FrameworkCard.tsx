@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { Badge } from "./ui/badge"
-import { Tag } from "./ui/tag"
 import type { FrameworkMeta } from "@/lib/frameworks-index"
 import { getFrameworkStepInSymptom, getSymptomsForFramework } from "@/lib/symptoms"
 import { getDifficultyShort } from "@/lib/taxonomy"
@@ -45,14 +44,9 @@ export default function FrameworkCard({ framework, symptomId }: FrameworkCardPro
           {framework.intent || framework.subtitle}
         </p>
 
-        <div className="space-y-2">
-          <div className="flex flex-wrap gap-1.5">
-            <Tag>{framework.domain_layer}</Tag>
-          </div>
-          <div className="flex items-center gap-1.5 pt-2.5 border-t border-surface-alt">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#94a3b8] shrink-0" />
-            <span className="mono text-[10px] text-subtle truncate">{footerLabel}</span>
-          </div>
+        <div className="flex items-center gap-1.5 pt-2.5 border-t border-surface-alt">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#94a3b8] shrink-0" />
+          <span className="mono text-[10px] text-subtle truncate">{footerLabel}</span>
         </div>
       </div>
     </Link>

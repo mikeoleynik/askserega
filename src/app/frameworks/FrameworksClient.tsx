@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo, useEffect, useCallback } from "react"
+import Link from "next/link"
 import { useSearchParams, useRouter } from "next/navigation"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
@@ -167,6 +168,16 @@ export default function FrameworksClient({ frameworks }: FrameworksClientProps) 
               <p className="text-sm text-text">{activeSymptom.outcome}</p>
             </div>
           )}
+
+          <div className="mt-10 pt-6 border-t border-surface-alt">
+            <Link
+              href="/theory-map"
+              className="mono text-[11px] text-subtle hover:text-text transition-colors inline-flex items-center gap-1.5"
+            >
+              Карта связей всех фреймворков
+              <span aria-hidden>→</span>
+            </Link>
+          </div>
         </div>
       </div>
       <Footer />

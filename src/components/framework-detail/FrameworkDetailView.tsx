@@ -156,12 +156,6 @@ export default function FrameworkDetailView({
             <Link href="/frameworks" className="hover:text-text transition-colors">
               Фреймворки
             </Link>
-            {fw.domain_layer && (
-              <>
-                <span>›</span>
-                <span className="text-muted">{fw.domain_layer}</span>
-              </>
-            )}
             <span>›</span>
             <span className="text-text">{fw.title}</span>
           </nav>

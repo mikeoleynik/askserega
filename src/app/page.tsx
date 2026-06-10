@@ -22,12 +22,11 @@ export default function HomePage() {
             </p>
 
             <p className="text-[16px] text-muted leading-relaxed mb-8">
-              <span className="text-subtle mr-1">↓</span>
-              Подборка{" "}
               <strong className="text-text font-medium">
-                инженерных моделей и фреймворков
-              </strong>
-              , чтобы материализовать, поддерживать и передавать теорию вашего проекта.
+                Каталог инженерных моделей
+              </strong>{" "}
+              с готовыми LLM-промтами. Выбираешь боль — и по шагам собираешь первую версию
+              теории проекта: общий язык и модель системы для всей команды.
             </p>
 
             <div className="flex items-center gap-2 mono text-[12px] text-muted mb-8 flex-wrap">

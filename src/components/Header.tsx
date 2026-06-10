@@ -1,5 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
+import GitHubLink from "@/components/GitHubLink"
 
 export default function Header() {
   return (
@@ -25,19 +26,8 @@ export default function Header() {
           </span>
         </div>
 
-        <div className="flex items-center gap-6 shrink-0">
-          <Link
-            href="/frameworks"
-            className="text-sm text-muted hover:text-text transition-colors"
-          >
-            Фреймворки
-          </Link>
-          <Link
-            href="/theory-map"
-            className="text-sm text-muted hover:text-text transition-colors"
-          >
-            Карта теории
-          </Link>
+        <div className="flex items-center gap-4 shrink-0">
+          <GitHubLink />
           <Link
             href="/frameworks"
             className="text-sm bg-text text-white px-4 py-1.5 rounded-full font-medium hover:bg-overlay transition-colors"
