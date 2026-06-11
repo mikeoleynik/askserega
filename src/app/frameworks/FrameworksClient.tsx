@@ -11,6 +11,12 @@ import SearchInput from "@/components/SearchInput"
 import { Badge } from "@/components/ui/badge"
 import { searchFrameworks, buildSearchIndex } from "@/lib/search"
 import { symptoms } from "@/lib/symptoms"
+import {
+  filterFrameworks,
+  formatFrameworkCount,
+  resolveActiveSymptom,
+  buildCatalogUrl,
+} from "@/lib/catalog-filter"
 import type { FrameworkMeta } from "@/lib/frameworks-index"
 import type { FilterState } from "@/components/FilterPanel"
 
@@ -44,42 +50,17 @@ export default function FrameworksClient({ frameworks }: FrameworksClientProps) 
   const updateFilter = useCallback(
     (newFilter: FilterState) => {
       setFilter(newFilter)
-      const params = new URLSearchParams()
-      if (newFilter.symptom) params.set("symptom", newFilter.symptom)
-      const qs = params.toString()
-      router.replace(qs ? `/frameworks?${qs}` : "/frameworks", { scroll: false })
+      router.replace(buildCatalogUrl(newFilter.symptom), { scroll: false })
     },
     [router],
   )
 
-  const activeSymptom = filter.symptom
-    ? symptoms.find((s) => s.id === filter.symptom)
-    : null
+  const activeSymptom = resolveActiveSymptom(filter.symptom, symptoms)
 
-  const filtered = useMemo(() => {
-    let result = [...frameworks]
-
-    if (filter.difficulty) {
-      result = result.filter((fw) => fw.difficulty === filter.difficulty)
-    }
-
-    if (filter.domain_layer) {
-      result = result.filter((fw) => fw.domain_layer === filter.domain_layer)
-    }
-
-    if (filter.symptom && activeSymptom) {
-      result = result.filter((fw) => activeSymptom.frameworks.includes(fw.slug))
-      const orderMap = new Map(activeSymptom.frameworks.map((s, i) => [s, i]))
-      result.sort((a, b) => (orderMap.get(a.slug) ?? 999) - (orderMap.get(b.slug) ?? 999))
-    } else if (filter.sort === "difficulty") {
-      const diffOrder = { low: 0, medium: 1, high: 2 }
-      result.sort((a, b) => diffOrder[a.difficulty] - diffOrder[b.difficulty])
-    } else {
-      result.sort((a, b) => a.title.localeCompare(b.title))
-    }
-
-    return result
-  }, [frameworks, filter, activeSymptom])
+  const filtered = useMemo(
+    () => filterFrameworks(frameworks, filter, activeSymptom),
+    [frameworks, filter, activeSymptom],
+  )
 
   const [searched, setSearched] = useState<FrameworkMeta[]>([])
 
@@ -121,11 +102,7 @@ export default function FrameworksClient({ frameworks }: FrameworksClientProps) 
             />
             <div className="mono text-[11px] text-subtle whitespace-nowrap">
               {displayed.length}{" "}
-              {displayed.length === 1
-                ? "фреймворк"
-                : displayed.length >= 2 && displayed.length <= 4
-                ? "фреймворка"
-                : "фреймворков"}
+              {formatFrameworkCount(displayed.length)}
             </div>
             {hasFilter && (
               <button
