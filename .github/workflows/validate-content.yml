@@ -5,10 +5,11 @@ on:
       - "content/frameworks/**/*.mdx"
       - "content/symptoms.json"
   push:
-    branches: [main]
+    branches: [main, master]
     paths:
       - "content/frameworks/**/*.mdx"
       - "content/symptoms.json"
+      - "src/**"
 
 jobs:
   validate:
@@ -20,6 +21,7 @@ jobs:
           node-version: 22
           cache: "npm"
       - run: npm ci
+      - run: npm test
       - run: npm run build
       - name: Validate frontmatter
         run: node scripts/validate-frontmatter.mjs

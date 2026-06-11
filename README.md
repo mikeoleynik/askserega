@@ -132,8 +132,8 @@ npm run dev
 
 ```
 content/frameworks/   # MDX-карточки фреймворков (основной контент)
-src/lib/symptoms.ts   # боли, категории, порядок цепочек
-openspec/             # спеки архитектуры и UI
+src/                  # Next.js UI (askserega.ru)
+scripts/              # валидация контента (CI)
 ```
 
 ### Как участвовать

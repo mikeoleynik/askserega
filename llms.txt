@@ -1,0 +1,17 @@
+# AskSerega — Engineering Knowledge Catalog
+
+Open-source catalog of frameworks for building a shared theory of a software system.
+
+## Docs
+- [README](/README.md)
+- [Contributing](/CONTRIBUTING.md)
+- [Framework chains spec](/openspec/changes/mdx-theory-builder/specs/framework-chains/spec.md)
+
+## Content
+- [Framework MDX template](/content/frameworks/_template.mdx)
+- [All frameworks](/content/frameworks/)
+
+## Code
+- [Symptoms (machine-readable)](/src/lib/symptoms.ts)
+- [Framework index parser](/src/lib/frameworks-index.ts)
+- [Framework detail UI](/src/components/framework-detail/FrameworkDetailView.tsx)

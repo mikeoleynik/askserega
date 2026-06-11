@@ -8,19 +8,20 @@ out/
 # local AI / editor tooling
 .opencode/
 
-# drafts & duplicates (not used by the app)
-img/
-design/
-Engineering Knowledge System.pdf
+# private workspace
+_private/
+
+# drafts (not in catalog / CI)
+content/drafts
+
+openspec/
 
 # typescript
 *.tsbuildinfo
 
-# env & secrets
+# env & secrets (fallback if outside _private/)
 .env
 .env*.local
-.kamal/secrets
-config
 
 # logs
 *.log
@@ -35,6 +36,7 @@ Thumbs.db
 # IDE (optional local settings)
 .idea/
 .vscode/
+.cursor/
 
 # test / coverage
 coverage/
@@ -42,14 +44,3 @@ coverage/
 # vercel / turbo (if used later)
 .vercel/
 .turbo/
-.cursor/
-
-Planning/
-site/
-content/drafts
-docs/
-doc/
-
-openspec/
-AGENTS.md
-llms.txt

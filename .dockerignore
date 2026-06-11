@@ -11,21 +11,16 @@ out
 .idea
 .opencode
 
-# not used in next build
+# private & docs (not used in next build)
+_private
 doc
-docs
 openspec
 content/drafts
-Planning
-site
-img
-design
 scripts
 
 # secrets
 .env
 .env.*
-.kamal/secrets
 
 # misc
 *.log
