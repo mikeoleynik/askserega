@@ -70,3 +70,11 @@ node scripts/check-symptoms-sync.mjs
 CI проверяет:
 - Валидность frontmatter (enum из `taxonomy.json`)
 - Наличие `.mdx` для каждого slug в `symptoms[].frameworks[]`
+- `npm test` (unit/component-тесты, в т.ч. целостность цепочек)
+
+## Открытые вопросы (help wanted)
+
+Продуктовые и контентные темы, где нужна помощь сообщества:  
+см. **[ISSUES.md](./ISSUES.md)**.
+
+Перед PR по `symptoms.json` или theory-map проверьте, не затрагивает ли он открытый вопрос из этого файла.

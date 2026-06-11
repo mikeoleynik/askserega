@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`symptoms chains — _private/docs/test-cases/chains/20260610-0914-chain-neighbors-steps.md > CHN-007: встречные смежные пары > фиксирует известные встречные пары в symptoms.json (осознанный снимок) 1`] = `
+[
+  "c4-model<->dependency-mapping",
+  "context-mapping<->hexagonal-architecture",
+  "ddd-bounded-contexts<->stable-dependencies-principle",
+  "event-storming<->runtime-flow-mapping",
+  "runtime-flow-mapping<->dependency-mapping",
+  "runtime-flow-mapping<->theory-graph",
+  "uml-basics<->runtime-flow-mapping",
+]
+`;
