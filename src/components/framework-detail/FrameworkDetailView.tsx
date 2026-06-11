@@ -11,6 +11,7 @@ import {
   getSymptomsForFramework,
   resolveActiveSymptom,
 } from "@/lib/symptoms"
+import { useTheoryMap } from "@/lib/useTheoryMap"
 import ChainMap from "./ChainMap"
 import CopyButton from "./CopyButton"
 
@@ -71,7 +72,8 @@ export default function FrameworkDetailView({
   artifactGallery,
 }: FrameworkDetailViewProps) {
   const [activeSection, setActiveSection] = useState("pain")
-  const [applied, setApplied] = useState(false)
+  const { toggle: toggleMap, has: isOnMap } = useTheoryMap()
+  const applied = isOnMap(fw.slug)
 
   const searchParams = useSearchParams()
   const symptomFromUrl = searchParams.get("symptom")
@@ -111,11 +113,6 @@ export default function FrameworkDetailView({
   })
 
   useEffect(() => {
-    const key = `theory:applied:${fw.slug}`
-    setApplied(localStorage.getItem(key) === "1")
-  }, [fw.slug])
-
-  useEffect(() => {
     const sections = document.querySelectorAll("section[id]")
     const observer = new IntersectionObserver(
       (entries) => {
@@ -132,16 +129,6 @@ export default function FrameworkDetailView({
     return () => observer.disconnect()
   }, [visibleToc.length])
 
-  function toggleApply() {
-    const key = `theory:applied:${fw.slug}`
-    const next = !applied
-    setApplied(next)
-    if (next) {
-      localStorage.setItem(key, "1")
-    } else {
-      localStorage.removeItem(key)
-    }
-  }
 
   return (
     <>
@@ -249,22 +236,27 @@ export default function FrameworkDetailView({
 
             <div className="mt-8">
               <button
-                onClick={toggleApply}
+                onClick={() => toggleMap(fw.slug)}
                 className={`w-full text-[12px] font-medium px-3 py-2.5 rounded-[8px] border transition-colors text-left flex items-center gap-2 ${
                   applied
                     ? "bg-text text-white border-text"
                     : "bg-surface-alt text-text border-[#d1d5db] hover:bg-[#e0e0e0]"
                 }`}
               >
-                {!applied ? (
-                  <span className="text-base">○</span>
-                ) : (
+                {applied ? (
                   <span className="text-base">✓</span>
+                ) : (
+                  <span className="text-base">○</span>
                 )}
-                <span>{applied ? "Применено ✓" : "Применил"}</span>
+                <span>{applied ? "На карте ✓" : "Добавить на карту"}</span>
               </button>
               {applied && (
-                <p className="mono text-[10px] text-subtle mt-1.5 pl-1">сохранено локально</p>
+                <p className="mono text-[10px] text-subtle mt-1.5 pl-1">
+                  видно на{" "}
+                  <a href="/theory-map" className="underline underline-offset-2 hover:text-text transition-colors">
+                    карте теории
+                  </a>
+                </p>
               )}
             </div>
           </div>
