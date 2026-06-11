@@ -1,0 +1,34 @@
+# dependencies & build artifacts
+node_modules
+.next
+out
+
+# git & local tooling
+.git
+.gitignore
+.cursor
+.vscode
+.idea
+.opencode
+
+# not used in next build
+doc
+docs
+openspec
+content/drafts
+Planning
+site
+img
+design
+scripts
+
+# secrets
+.env
+.env.*
+.kamal/secrets
+
+# misc
+*.log
+coverage
+.DS_Store
+Thumbs.db

@@ -17,7 +17,7 @@ function readSlugs(): Set<string> {
 }
 
 function writeSlugs(slugs: Set<string>) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([...slugs]))
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(slugs)))
 }
 
 export function useTheoryMap() {

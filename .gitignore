@@ -19,6 +19,8 @@ Engineering Knowledge System.pdf
 # env & secrets
 .env
 .env*.local
+.kamal/secrets
+config
 
 # logs
 *.log

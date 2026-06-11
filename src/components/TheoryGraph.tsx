@@ -95,7 +95,7 @@ export default function TheoryGraph({ frameworks }: TheoryGraphProps) {
     () => buildGraph(frameworks, slugs),
     // пересчитываем только при изменении slugs или frameworks
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [frameworks, slugs.size, [...slugs].join(",")]
+    [frameworks, slugs.size, Array.from(slugs).join(",")]
   )
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
@@ -107,7 +107,7 @@ export default function TheoryGraph({ frameworks }: TheoryGraphProps) {
     setNodes(n)
     setEdges(e)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slugs.size, [...slugs].join(",")])
+  }, [slugs.size, Array.from(slugs).join(",")])
 
   const defaultEdgeOptions = useMemo(
     () => ({
