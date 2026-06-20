@@ -1,10 +1,11 @@
 import { readFileSync, readdirSync, existsSync } from "fs"
 import { join } from "path"
 
-const FRAMEWORKS_DIR = join(process.cwd(), "content", "frameworks")
+const ROOT = process.env.CONTENT_CI_ROOT || process.cwd()
+const FRAMEWORKS_DIR = join(ROOT, "content", "frameworks")
 
 // Единый источник таксономии — src/lib/taxonomy.json (его же импортирует приложение).
-const taxonomy = JSON.parse(readFileSync(join(process.cwd(), "src/lib/taxonomy.json"), "utf-8"))
+const taxonomy = JSON.parse(readFileSync(join(ROOT, "src/lib/taxonomy.json"), "utf-8"))
 const VALID_DIFFICULTIES = taxonomy.difficulties
 const VALID_DOMAIN_LAYERS = taxonomy.domainLayers
 

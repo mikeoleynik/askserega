@@ -98,16 +98,16 @@ function parseTitledList(raw: unknown): { title: string; description: string }[]
     .filter((item): item is { title: string; description: string } => item !== null)
 }
 
-const FRAMEWORKS_DIR = path.join(process.cwd(), "content", "frameworks")
+const DEFAULT_FRAMEWORKS_DIR = path.join(process.cwd(), "content", "frameworks")
 
-export function getAllFrameworks(): FrameworkMeta[] {
-  if (!fs.existsSync(FRAMEWORKS_DIR)) return []
+export function getAllFrameworks(frameworksDir = DEFAULT_FRAMEWORKS_DIR): FrameworkMeta[] {
+  if (!fs.existsSync(frameworksDir)) return []
 
-  const files = fs.readdirSync(FRAMEWORKS_DIR).filter((f) => f.endsWith(".mdx") && !f.startsWith("_"))
+  const files = fs.readdirSync(frameworksDir).filter((f) => f.endsWith(".mdx") && !f.startsWith("_"))
 
   return files.map((file) => {
     const slug = file.replace(/\.mdx$/, "")
-    const raw = fs.readFileSync(path.join(FRAMEWORKS_DIR, file), "utf-8")
+    const raw = fs.readFileSync(path.join(frameworksDir, file), "utf-8")
     const { data } = matter(raw)
     return {
       slug,

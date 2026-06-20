@@ -6,8 +6,9 @@ import { join } from "path"
 //   1. каждый slug в symptoms[].frameworks[] имеет content/frameworks/<slug>.mdx
 //   2. предупреждение, если MDX не привязан ни к одной боли (справочный фреймворк)
 
-const FRAMEWORKS_DIR = join(process.cwd(), "content", "frameworks")
-const SYMPTOMS_FILE = join(process.cwd(), "content", "symptoms.json")
+const ROOT = process.env.CONTENT_CI_ROOT || process.cwd()
+const FRAMEWORKS_DIR = join(ROOT, "content", "frameworks")
+const SYMPTOMS_FILE = join(ROOT, "content", "symptoms.json")
 
 function getMdxSlugs() {
   if (!existsSync(FRAMEWORKS_DIR)) return new Set()
