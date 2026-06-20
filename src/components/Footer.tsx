@@ -1,4 +1,5 @@
 import GitHubLink from "@/components/GitHubLink"
+import { SITE_VERSION_LABEL } from "@/lib/version"
 
 export default function Footer() {
   return (
@@ -9,7 +10,7 @@ export default function Footer() {
         </span>
         <div className="flex items-center gap-2.5">
           <GitHubLink size="sm" />
-          <span className="mono text-[11px] text-subtle">v0.1.0-alpha</span>
+          <span className="mono text-[11px] text-subtle">{SITE_VERSION_LABEL}</span>
         </div>
       </div>
     </footer>

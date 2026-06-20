@@ -1,5 +1,7 @@
 import Link from "next/link"
 
+const GITHUB_REPO_URL = "https://github.com/mikeoleynik/askserega"
+
 interface GitHubLinkProps {
   size?: "sm" | "md"
   className?: string
@@ -10,7 +12,9 @@ export default function GitHubLink({ size = "md", className = "" }: GitHubLinkPr
 
   return (
     <Link
-      href="#"
+      href={GITHUB_REPO_URL}
+      target="_blank"
+      rel="noopener noreferrer"
       aria-label="GitHub"
       className={`inline-flex shrink-0 text-muted hover:text-text transition-colors ${className}`}
     >
